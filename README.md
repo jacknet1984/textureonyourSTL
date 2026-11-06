@@ -1,6 +1,5 @@
-
 <a href="https://jacknet1984.github.io/textureonyourSTL/" target="_blank">
-  <img src="https://github.com/user-attachments/assets/aba3a165-5c2a-4ada-9193-17470aa7d6d0" alt="Anteprima del progetto" width="100%" />
+  <img src="https://github.com/user-attachments/assets/6d858fa7-ea64-4789-a14e-19d4f3d1de43" alt="Anteprima del progetto" width="100%" />
 </a>
 
 Repository: jacknet184/textureonyourSTL
@@ -58,6 +57,6 @@ This project is open-source and released under the MIT License.
 ========================================================================
 
 <a href="https://makerworld.com/@Disagioinside" target="_blank">
-  <img src="https://github.com/user-attachments/assets/4f50031a-f5eb-4625-99c9-4917a43af961" alt="MakerWorld Profile" width="100%" />
+  <img src="https://github.com/user-attachments/assets/e6e2db43-23cd-4c76-a912-4b01600bbf42" alt="MakerWorld Profile" width="100%" />
 </a>
 
