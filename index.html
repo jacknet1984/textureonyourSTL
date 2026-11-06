@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decal 3D Studio - Texture & Multicolore su STL</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: #0d0f12;
+      color: #e2e8f0;
+    }
+    .glow-orange {
+      box-shadow: 0 0 25px rgba(249, 115, 22, 0.4);
+    }
+    .text-gradient {
+      background: linear-gradient(135deg, #f97316 0%, #fb923c 50%, #facc15 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .grid-bg {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+  </style>
+</head>
+<body class="grid-bg min-h-screen flex flex-col justify-between selection:bg-orange-500 selection:text-white">
+
+  <!-- Header / Navbar -->
+  <header class="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-400 flex items-center justify-center font-bold text-black text-xl shadow-lg shadow-orange-500/20">
+          3D
+        </div>
+        <span class="text-xl font-bold tracking-tight text-white">Decal <span class="text-orange-500">3D Studio</span></span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <!-- SELETTORE LINGUA AGGIUNTO -->
+        <div class="bg-zinc-900 p-1 rounded-lg flex items-center border border-zinc-800">
+          <button id="btn-it" onclick="setLanguage('it')" class="px-2.5 py-1 text-xs font-bold rounded-md bg-orange-500 text-black transition-all">IT</button>
+          <button id="btn-en" onclick="setLanguage('en')" class="px-2.5 py-1 text-xs font-bold rounded-md text-zinc-400 hover:text-white transition-all">EN</button>
+        </div>
+
+        <a href="https://github.com/jacknet1984/textureonyourSTL" target="_blank" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2 text-sm font-semibold">
+          <i class="fab font-xl fa-github"></i> GitHub Repo
+        </a>
+        <a href="https://jacknet1984.github.io/textureonyourSTL/app.html" class="bg-orange-500 hover:bg-orange-400 text-black font-bold px-4 py-2 rounded-lg transition-all shadow-md shadow-orange-500/20 text-sm" data-i18n="navApp">
+          Apri App Live
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="max-w-7xl mx-auto px-6 pt-12 pb-20 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+    
+    <!-- Left Column: Copywriting -->
+    <div class="lg:col-span-6 space-y-8">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs font-semibold tracking-wide uppercase">
+        <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+        <span data-i18n="badge">Open Source & 100% Free</span>
+      </div>
+      
+      <h1 class="text-4xl sm:text-6xl font-extrabold leading-tight text-white tracking-tight">
+        <span data-i18n="titlePart1">Applica texture e immagini sui tuoi</span> <span class="text-gradient" data-i18n="titlePart2">STL in secondi.</span>
+      </h1>
+      
+      <p class="text-zinc-400 text-lg leading-relaxed" data-i18n="subtitle">
+        Basta impazzire su software complessi solo per inserire un logo o una decalcomania. Carica il tuo file STL, seleziona una PNG e lascia che il software converta i pixel in rilievi e filamenti per la tua stampante 3D multicolore.
+      </p>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap gap-4 pt-4">
+        <a href="https://jacknet1984.github.io/textureonyourSTL/app.html" class="bg-gradient-to-r from-orange-500 to-amber-500 text-black text-lg font-bold px-8 py-4 rounded-xl hover:scale-105 transition-all shadow-xl shadow-orange-500/25 flex items-center gap-3">
+          <i class="fas fa-rocket"></i> <span data-i18n="ctaLaunch">Lancia la Web App</span>
+        </a>
+        <a href="https://github.com/jacknet1984/textureonyourSTL" target="_blank" class="bg-zinc-900 border border-zinc-700 text-white text-lg font-semibold px-6 py-4 rounded-xl hover:bg-zinc-800 transition-all flex items-center gap-3">
+          <i class="fab fa-github text-xl"></i> <span data-i18n="ctaStar">Star su GitHub</span>
+        </a>
+      </div>
+
+      <!-- Key Highlights -->
+      <div class="grid grid-cols-3 gap-4 pt-6 border-t border-zinc-800/80">
+        <div>
+          <div class="text-2xl font-bold text-white">4+</div>
+          <div class="text-xs text-zinc-500" data-i18n="stat1">Gestione Filamenti</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-white">Client-Side</div>
+          <div class="text-xs text-zinc-500" data-i18n="stat2">100% Sicuro nel Browser</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-white">AMS / ACE</div>
+          <div class="text-xs text-zinc-500" data-i18n="stat3">Pronto per Slicing</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Interactive 3D Canvas Preview -->
+    <div class="lg:col-span-6 relative">
+      <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-orange-500 to-amber-500 opacity-20 blur-xl"></div>
+      
+      <div class="relative bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl">
+        <!-- Mock App Top Bar -->
+        <div class="px-4 py-3 bg-zinc-900 border-b border-zinc-800 flex justify-between items-center text-xs text-zinc-400">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
+            <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
+            <span class="w-3 h-3 rounded-full bg-green-500/80"></span>
+            <span class="ml-2 font-mono text-zinc-300">Decal_3D_Studio_Preview.stl</span>
+          </div>
+          <span class="bg-zinc-800 px-2 py-1 rounded text-zinc-300 font-mono">Three.js Engine</span>
+        </div>
+
+        <!-- 3D Canvas Container -->
+        <div id="canvas-container" class="w-full h-[400px] cursor-grab active:cursor-grabbing relative">
+          <!-- Canvas Overlay UI -->
+          <div class="absolute bottom-4 left-4 right-4 bg-zinc-900/90 backdrop-blur border border-zinc-800 p-3 rounded-xl flex justify-between items-center text-xs text-zinc-300 pointer-events-none">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-mouse text-orange-400"></i> <span data-i18n="canvasHint">Ruota & Trascina per testare la vista 3D</span>
+            </div>
+            <span class="text-orange-400 font-bold" data-i18n="canvasBadge">Proiezione Live</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Features Grid Section -->
+  <section class="bg-zinc-950 border-t border-zinc-900 py-16">
+    <div class="max-w-7xl mx-auto px-6">
+      <h2 class="text-2xl font-bold text-center text-white mb-12" data-i18n="featHeader">Perché dovresti usarlo per i tuoi progetti 3D?</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-zinc-900/50 border border-zinc-800 p-6 rounded-2xl space-y-3">
+          <div class="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-400 text-xl font-bold">
+            <i class="fas fa-image"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white" data-i18n="f1Title">Da PNG a Mesh 3D</h3>
+          <p class="text-zinc-400 text-sm leading-relaxed" data-i18n="f1Desc">
+            Mappa qualsiasi immagine PNG su file STL con mappatura automatica dei colori e controllo della profondità del rilievo.
+          </p>
+        </div>
+
+        <div class="bg-zinc-900/50 border border-zinc-800 p-6 rounded-2xl space-y-3">
+          <div class="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-400 text-xl font-bold">
+            <i class="fas fa-layer-group"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white" data-i18n="f2Title">Ottimizzato Multicolore</h3>
+          <p class="text-zinc-400 text-sm leading-relaxed" data-i18n="f2Desc">
+            Assegna automaticamente fino a 4 filamenti diversi per estrusore, perfetto per sistemi Bambu AMS o Anycubic ACE Pro.
+          </p>
+        </div>
+
+        <div class="bg-zinc-900/50 border border-zinc-800 p-6 rounded-2xl space-y-3">
+          <div class="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-400 text-xl font-bold">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white" data-i18n="f3Title">Zero Installazioni</h3>
+          <p class="text-zinc-400 text-sm leading-relaxed" data-i18n="f3Desc">
+            Funziona interamente nel tuo browser tramite JavaScript. Nessun software da scaricare, nessun server su cui caricare i tuoi file.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-zinc-900 bg-zinc-950 py-8 text-xs text-zinc-500">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
+      <div data-i18n="footerCopy">
+        Decal 3D Studio • Sviluppato per la community Maker 3D
+      </div>
+      <div class="flex space-x-4">
+        <a href="https://github.com/jacknet1984/textureonyourSTL" target="_blank" class="hover:text-zinc-300 transition-colors" data-i18n="footerRepo">GitHub Repository</a>
+        <a href="https://jacknet1984.github.io/textureonyourSTL/" class="hover:text-zinc-300 transition-colors" data-i18n="footerApp">App Web Live</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Translation Script -->
+  <script>
+    const translations = {
+      it: {
+        navApp: "Apri App Live",
+        badge: "Open Source & 100% Free",
+        titlePart1: "Applica texture e immagini sui tuoi",
+        titlePart2: "STL in secondi.",
+        subtitle: "Basta impazzire su software complessi solo per inserire un logo o una decalcomania. Carica il tuo file STL, seleziona una PNG e lascia che il software converta i pixel in rilievi e filamenti per la tua stampante 3D multicolore.",
+        ctaLaunch: "Lancia la Web App",
+        ctaStar: "Star su GitHub",
+        stat1: "Gestione Filamenti",
+        stat2: "100% Sicuro nel Browser",
+        stat3: "Pronto per Slicing",
+        canvasHint: "Ruota & Trascina per testare la vista 3D",
+        canvasBadge: "Proiezione Live",
+        featHeader: "Perché dovresti usarlo per i tuoi progetti 3D?",
+        f1Title: "Da PNG a Mesh 3D",
+        f1Desc: "Mappa qualsiasi immagine PNG su file STL con mappatura automatica dei colori e controllo della profondità del rilievo.",
+        f2Title: "Ottimizzato Multicolore",
+        f2Desc: "Assegna automaticamente fino a 4 filamenti diversi per estrusore, perfetto per sistemi Bambu AMS o Anycubic ACE Pro.",
+        f3Title: "Zero Installazioni",
+        f3Desc: "Funziona interamente nel tuo browser tramite JavaScript. Nessun software da scaricare, nessun server su cui caricare i tuoi file.",
+        footerCopy: "Decal 3D Studio • Sviluppato per la community Maker 3D",
+        footerRepo: "GitHub Repository",
+        footerApp: "App Web Live"
+      },
+      en: {
+        navApp: "Open Live App",
+        badge: "Open Source & 100% Free",
+        titlePart1: "Apply textures and images onto your",
+        titlePart2: "STL in seconds.",
+        subtitle: "Stop struggling with complex software just to add a logo or decal. Upload your STL file, select a PNG, and let the software convert pixels into reliefs and filaments for your multicolor 3D printer.",
+        ctaLaunch: "Launch Web App",
+        ctaStar: "Star on GitHub",
+        stat1: "Filament Management",
+        stat2: "100% Secure in Browser",
+        stat3: "Slicer Ready",
+        canvasHint: "Rotate & Drag to test 3D view",
+        canvasBadge: "Live Projection",
+        featHeader: "Why should you use it for your 3D projects?",
+        f1Title: "From PNG to 3D Mesh",
+        f1Desc: "Map any PNG image onto an STL file with automatic color mapping and relief depth control.",
+        f2Title: "Multicolor Optimized",
+        f2Desc: "Automatically assign up to 4 different filaments per extruder, perfect for Bambu AMS or Anycubic ACE Pro systems.",
+        f3Title: "No Installation",
+        f3Desc: "Runs entirely in your browser via JavaScript. No software to download, no servers to upload your files to.",
+        footerCopy: "Decal 3D Studio • Built for the 3D Maker community",
+        footerRepo: "GitHub Repository",
+        footerApp: "Live Web App"
+      }
+    };
+
+    function setLanguage(lang) {
+      document.querySelectorAll('[data-i18n]').forEach(elem => {
+        const key = elem.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+          elem.textContent = translations[lang][key];
+        }
+      });
+
+      const btnIt = document.getElementById('btn-it');
+      const btnEn = document.getElementById('btn-en');
+
+      if (lang === 'it') {
+        btnIt.className = "px-2.5 py-1 text-xs font-bold rounded-md bg-orange-500 text-black transition-all";
+        btnEn.className = "px-2.5 py-1 text-xs font-bold rounded-md text-zinc-400 hover:text-white transition-all";
+      } else {
+        btnEn.className = "px-2.5 py-1 text-xs font-bold rounded-md bg-orange-500 text-black transition-all";
+        btnIt.className = "px-2.5 py-1 text-xs font-bold rounded-md text-zinc-400 hover:text-white transition-all";
+      }
+    }
+  </script>
+
+  <!-- 3D Interactive Demo Script -->
+  <script>
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0d0f12);
+
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.set(0, 3, 7);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight1.position.set(5, 10, 7);
+    scene.add(dirLight1);
+
+    const dirLight2 = new THREE.DirectionalLight(0xf97316, 0.5);
+    dirLight2.position.set(-5, -5, -5);
+    scene.add(dirLight2);
+
+    // Car shape simulation
+    const geometry = new THREE.BoxGeometry(3.5, 1.2, 2, 32, 16, 16);
+    const material = new THREE.MeshStandardMaterial({ 
+      color: 0x3f3f46, 
+      roughness: 0.4,
+      metalness: 0.2
+    });
+    const carBody = new THREE.Mesh(geometry, material);
+    scene.add(carBody);
+
+    // Decal Star
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d');
+    
+    ctx.fillStyle = '#f97316';
+    ctx.beginPath();
+    ctx.arc(128, 128, 110, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(128, 128, 90, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#f97316';
+    drawStar(ctx, 128, 128, 5, 70, 30);
+    ctx.fill();
+
+    function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
+      let rot = Math.PI / 2 * 3;
+      let x = cx;
+      let y = cy;
+      let step = Math.PI / spikes;
+
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - outerRadius);
+      for (let i = 0; i < spikes; i++) {
+        x = cx + Math.cos(rot) * outerRadius;
+        y = cy + Math.sin(rot) * outerRadius;
+        ctx.lineTo(x, y);
+        rot += step;
+
+        x = cx + Math.cos(rot) * innerRadius;
+        y = cy + Math.sin(rot) * innerRadius;
+        ctx.lineTo(x, y);
+        rot += step;
+      }
+      ctx.lineTo(cx, cy - outerRadius);
+      ctx.closePath();
+    }
+
+    const texture = new THREE.CanvasTexture(canvas);
+    const decalGeo = new THREE.PlaneGeometry(1.4, 1.4);
+    const decalMat = new THREE.MeshBasicMaterial({ 
+      map: texture, 
+      transparent: true,
+      polygonOffset: true,
+      polygonOffsetFactor: -1
+    });
+    const decalMesh = new THREE.Mesh(decalGeo, decalMat);
+    decalMesh.position.set(0, 0.61, 0);
+    decalMesh.rotation.x = -Math.PI / 2;
+    scene.add(decalMesh);
+
+    // Grid Helper
+    const grid = new THREE.GridHelper(10, 20, 0xf97316, 0x27272a);
+    grid.position.y = -1;
+    scene.add(grid);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      carBody.rotation.y += 0.003;
+      decalMesh.rotation.z += 0.003;
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+  </script>
+</body>
+</html>
