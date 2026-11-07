@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Decal 3D Studio</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -111,8 +110,8 @@ figure{margin:0}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="three.min.js"></script>
+<script src="OrbitControls.js"></script>
 <div class="app" style="padding-left:max(0px,env(safe-area-inset-left,0px))">
   <aside class="panel">
     <header class="brand"><h1>Decal 3D Studio</h1><p>STL / 3MF / OBJ + immagine, esportazione multicolore per la stampa 3D</p><div class="lang" role="group" aria-label="Language / Lingua"><button type="button" id="lEN" aria-pressed="true">EN</button><button type="button" id="lIT" aria-pressed="false">IT</button></div><button class="btn ghost" id="bReset" type="button">Ripristina impostazioni</button></header>
@@ -571,6 +570,7 @@ function makeCore() { return (() => {
       if (dot(n, V) / l < cosMax) continue;
       if (prm.keepPrev && LB[t]) continue;
       if (prm.nzMin !== undefined && n[2] / l < prm.nzMin) continue;
+      if (prm.zMin !== undefined && Math.max(P[3 * a + 2], P[3 * b + 2], P[3 * c + 2]) <= prm.zMin) continue;
       const ax = lx(a), ay = ly(a), bx = lx(b), by = ly(b), cx = lx(c), cy = ly(c);
       const minx = Math.min(ax, bx, cx), maxx = Math.max(ax, bx, cx), miny = Math.min(ay, by, cy), maxy = Math.max(ay, by, cy);
       if (maxx < -hw || minx > hw || maxy < -hh || miny > hh) continue;
@@ -1130,7 +1130,7 @@ function makeHandlers(Core) {
   function chain(m, j, L, prog, f0, f1) {
     let res = null; const n = j.frames.length;
     j.frames.forEach((fr, i) => {
-      res = Core.computeDecal(m, fr, { W: j.W, H: j.H, L, cosMax: j.cosMax, keepPrev: j.keepPrev, nzMin: j.nzMin, minArea: j.minArea, enabled: j.enabled, frameIndex: i, maxTri: j.maxTri, prog: (f) => prog(f0 + ((f1 - f0) * (i + f)) / n, 'Calcolo la geometria') }, j.img, res);
+      res = Core.computeDecal(m, fr, { W: j.W, H: j.H, L, cosMax: j.cosMax, keepPrev: j.keepPrev, nzMin: j.nzMin, zMin: j.zMin, minArea: j.minArea, enabled: j.enabled, frameIndex: i, maxTri: j.maxTri, prog: (f) => prog(f0 + ((f1 - f0) * (i + f)) / n, 'Calcolo la geometria') }, j.img, res);
     });
     return res;
   }
@@ -1654,7 +1654,7 @@ const Core = makeCore();
     if (mode() === 'relief' && !isPng() && $('cAll').checked) {
       // tutto l'oggetto: dall'alto e dai quattro lati, escluso il fondo
       const C = [0, 1, 2].map((k) => (m.min[k] + m.max[k]) / 2);
-      return [[[0, 0, 1], [0, 1, 0]], [[1, 0, 0], [0, 0, 1]], [[-1, 0, 0], [0, 0, 1]], [[0, 1, 0], [0, 0, 1]], [[0, -1, 0], [0, 0, 1]]].map(([v, up]) => Core.makeFrame(C, v, up, p.rot));
+      return [[[0, 0, 1], [0, 1, 0]], [[1, 0, 0], [0, 0, 1]], [[-1, 0, 0], [0, 0, 1]], [[0, 1, 0], [0, 0, 1]], [[0, -1, 0], [0, 0, 1]], [[0, 0, -1], [0, 1, 0]]].map(([v, up]) => Core.makeFrame(C, v, up, p.rot));
     }
     const md = $('sMode').value, cam = $('sDir').value === 'camera';
     const diag = Math.hypot(m.max[0] - m.min[0], m.max[1] - m.min[1], m.max[2] - m.min[2]);
@@ -1694,7 +1694,7 @@ const Core = makeCore();
           while (ptr[li] < L.length) {
             const { fi, o } = L[ptr[li]++]; const f = FACES[fi];
             const hit = Core.rayHit(m, o, [-f.v[0], -f.v[1], -f.v[2]]);
-            if (!hit || hit.normal[2] < -0.2 || hit.normal[0] * f.v[0] + hit.normal[1] * f.v[1] + hit.normal[2] * f.v[2] < 0.35) continue;
+            if (!hit || hit.normal[2] < -0.5 || hit.normal[0] * f.v[0] + hit.normal[1] * f.v[1] + hit.normal[2] * f.v[2] < 0.35) continue;
             if (taken.some((q) => Math.hypot(q[0] - hit.point[0], q[1] - hit.point[1], q[2] - hit.point[2]) < sp * 0.9)) continue;
             taken.push(hit.point); add(hit.point, hit.normal, f.v, f.up); break;
           }
@@ -1762,7 +1762,7 @@ const Core = makeCore();
     const fs = frames(p, wa.W);
     const job = {
       purpose, kind: rel ? 'relief' : 'color', frames: fs.map((f) => ({ O: f.O, v: f.v, u: f.u, r: f.r })), W: wa.W, H: wa.H,
-      L: purpose === 'preview' ? Math.max(p.L, wa.W / 140) : p.L, cosMax: p.cosMax, keepPrev: rel && !isPng() && $('cAll').checked, nzMin: rel && !isPng() && $('cAll').checked ? -0.35 : undefined, minArea: rel ? 0 : p.minArea,
+      L: purpose === 'preview' ? Math.max(p.L, wa.W / 140) : p.L, cosMax: p.cosMax, keepPrev: rel && !isPng() && $('cAll').checked, zMin: rel && !isPng() && $("cAll").checked ? S.model.min[2] + 0.5 : undefined, minArea: rel ? 0 : p.minArea,
       maxTri: rel ? lim : Math.floor(lim * 0.6), limit: lim, depth: p.d, nLabels: S.clusters.length, enabled: p.enabled,
       baseColor: $('cBase').value, colors: S.clusters.map((c) => c.color),
     };
@@ -1974,5 +1974,3 @@ const Core = makeCore();
 /*APP_END*/
 
 </script>
-
-</body></html>
