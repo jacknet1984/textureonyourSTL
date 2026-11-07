@@ -60,3 +60,32 @@ This project is open-source and released under the MIT License.
   <img src="https://github.com/user-attachments/assets/e6e2db43-23cd-4c76-a912-4b01600bbf42" alt="MakerWorld Profile" width="100%" />
 </a>
 
+
+
+
+UPDATE:
+
+What's new
+
+Interface
+
+Two languages, Italian / English. The app opens in English; the EN / IT switch is at the top of the panel. The exported zip (file names, README) also follows the selected language.
+Four views like in Blender: Top, 3D, Front and Right. You can click in any view to place the image. Double-click a view to enlarge it to full size; double-click again to get the four views back.
+Redesigned left panel: wider, two columns on large screens, rounded cards, nicer buttons with icons. The Prepare files for printing button is always visible at the bottom, no scrolling needed.
+
+Supported files
+
+Models: STL, 3MF and OBJ.
+Images: PNG, JPG, WebP, GIF, BMP, SVG.
+Background removal right in the site, with adjustable tolerance and an option to also remove inner areas of the same color.
+
+Export
+
+Fixed the "points to repair" warnings reported by slicers: the colored parts are now closed meshes (0 open edges and 0 invalid edges in our tests).
+Colors stay assigned as separate parts with their own extruder, so they are not lost by mesh repair.
+Changes
+Removed hand drawing and the move arrows, which did not work as intended. To move the image, click on the model.
+Good to know
+Background removal works best on plain backgrounds.
+The four views are designed for large screens; on a phone, double-click a view to enlarge it.
+If your slicer still reports errors on the exported file, please open an issue and tell us which slicer you use.
