@@ -1649,12 +1649,16 @@ const Core = makeCore();
     enabled: S.clusters.map((c) => c.on),
   });
   const GRID = [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1], [2, 0], [-2, 0], [0, 2]];
+  // direzioni oblique per raggiungere anche i punti nascosti dalle sei viste principali (sotto il mento, tra le orecchie e la testa...)
+  const OBLIQUE = (() => { const o = [], s = Math.SQRT1_2; [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([x, y]) => o.push([x * s, y * s, -s])); [[1, 1], [-1, 1], [1, -1], [-1, -1]].forEach(([x, y]) => { o.push([x * 0.5, y * 0.5, -s]); o.push([x * s, y * s, 0]); });
+    [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([x, y]) => o.push([x * s, y * s, s])); return o; })();
   function frames(p, Wa) {
     const m = S.model; const base = Core.makeFrame(S.place.O, S.place.v, S.place.up, p.rot); const out = [base]; S.missing = 0;
     if (mode() === 'relief' && !isPng() && $('cAll').checked) {
       // tutto l'oggetto: dall'alto e dai quattro lati, escluso il fondo
       const C = [0, 1, 2].map((k) => (m.min[k] + m.max[k]) / 2);
-      return [[[0, 0, 1], [0, 1, 0]], [[1, 0, 0], [0, 0, 1]], [[-1, 0, 0], [0, 0, 1]], [[0, 1, 0], [0, 0, 1]], [[0, -1, 0], [0, 0, 1]], [[0, 0, -1], [0, 1, 0]]].map(([v, up]) => Core.makeFrame(C, v, up, p.rot));
+      return [[[0, 0, 1], [0, 1, 0]], [[1, 0, 0], [0, 0, 1]], [[-1, 0, 0], [0, 0, 1]], [[0, 1, 0], [0, 0, 1]], [[0, -1, 0], [0, 0, 1]], [[0, 0, -1], [0, 1, 0]]]
+        .concat(OBLIQUE.map((v) => [v, [0, 0, 1]])).map(([v, up]) => Core.makeFrame(C, v, up, p.rot));
     }
     const md = $('sMode').value, cam = $('sDir').value === 'camera';
     const diag = Math.hypot(m.max[0] - m.min[0], m.max[1] - m.min[1], m.max[2] - m.min[2]);
@@ -1737,7 +1741,7 @@ const Core = makeCore();
   }
   function workArea(p) {
     const big = Math.max(...dims(S.model)) * 1.25;
-    if (mode() === 'relief' && !isPng()) { const W = $('cAll').checked ? big : p.W; return { W, H: W }; }
+    if (mode() === 'relief' && !isPng()) { const W = $('cAll').checked ? Math.hypot(...dims(S.model)) * 1.05 : p.W; return { W, H: W }; }
     if (mode() === 'relief' && $('cAll').checked && S.img) return { W: big, H: (big * S.img.h) / S.img.w };
     return { W: p.W, H: S.img ? (p.W * S.img.h) / S.img.w : p.W };
   }
@@ -1805,7 +1809,7 @@ const Core = makeCore();
       if (rel) {
         showTex(r.V ? r : null);
         S.chip = { n: 1, area: r.area, lab: 'area lavorata' }; renderChips();
-        setStatus(r.nLabeled ? () => (fs.length > 1 ? t('%1 copie posizionate. ', fs.length) : '') + t('Anteprima a risoluzione ridotta: il file finale usa il dettaglio mesh scelto.') : 'Nessuna area lavorata qui: sposta l\'area sulla superficie del modello.', !r.nLabeled);
+        setStatus(r.nLabeled ? () => (fs.length > 1 && !$('cAll').checked ? t('%1 copie posizionate. ', fs.length) : '') + t('Anteprima a risoluzione ridotta: il file finale usa il dettaglio mesh scelto.') : 'Nessuna area lavorata qui: sposta l\'area sulla superficie del modello.', !r.nLabeled);
       } else {
         showTex(null);
         for (const l in r.buckets) {
