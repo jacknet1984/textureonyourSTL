@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Decal 3D Studio</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -19,27 +18,34 @@ html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 var(--font);overflow:hidden}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-.app{display:grid;grid-template-columns:minmax(300px,360px) 1fr;height:100%}
-.panel{background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;padding:0 0 24px;min-width:0}
-.brand{padding:18px 20px 14px;border-bottom:1px solid var(--line)}
-.brand h1{margin:0;font-size:17px;font-weight:600;letter-spacing:.01em}
-.brand p{margin:2px 0 0;color:var(--muted);font-size:12.5px}
-section{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.app{display:grid;grid-template-columns:clamp(380px,48vw,720px) 1fr;height:100%}
+.panel{background:var(--bg);border-right:1px solid var(--line);overflow-y:auto;padding:0;padding-left:max(0px,env(safe-area-inset-left,0px));min-width:0;container-type:inline-size;display:flex;flex-direction:column}
+.brand{padding:16px 18px 12px;background:var(--panel);border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px}
+.brand h1{margin:0;font-size:17px;font-weight:600;letter-spacing:.01em;flex:1 1 100%}
+.brand p{margin:0;color:var(--muted);font-size:12.5px;flex:1 1 100%}
+.cards{display:grid;grid-template-columns:1fr;gap:12px;padding:12px;flex:1}
+.col{display:flex;flex-direction:column;gap:12px;min-width:0}
+@container (min-width:640px){.cards{grid-template-columns:1fr 1fr;align-items:start}}
+section{padding:14px 16px 16px;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.04);display:flex;flex-direction:column;gap:10px}
+.dock{position:sticky;bottom:0;z-index:3;background:var(--panel);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:6px;box-shadow:0 -6px 18px rgba(0,0,0,.06)}
+.dock .hint{font-size:11.5px}
 h2{margin:0;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);display:flex;align-items:center;gap:8px}
-.step{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:500 11px var(--mono);letter-spacing:0}
-.btn{appearance:none;border:1px solid var(--line);background:var(--field);color:var(--ink);padding:8px 12px;border-radius:6px;font:500 13px var(--font);cursor:pointer;text-align:center}
-.btn:hover{border-color:var(--accent)}
+.step{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:500 11px var(--mono);letter-spacing:0}
+.btn{appearance:none;border:1px solid var(--line);background:var(--field);color:var(--ink);padding:9px 13px;border-radius:10px;font:500 13px var(--font);cursor:pointer;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 1px 1px rgba(0,0,0,.04);transition:border-color .12s,transform .08s,box-shadow .12s}
+.btn svg{flex:none}
+.btn:hover{border-color:var(--accent);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.btn:active{transform:translateY(1px)}
 .btn:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);padding:11px 14px;font-size:14px}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);padding:13px 16px;font-size:14.5px;font-weight:600;border-radius:12px;box-shadow:0 2px 8px color-mix(in srgb,var(--accent) 35%,transparent)}
 .btn.primary:disabled{opacity:.5;cursor:default}
-.file{display:block}
+.file{display:flex}
 .file input{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px}
 .meta{font:12px var(--mono);color:var(--muted);overflow-wrap:anywhere}
 .row{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center}
 .row label{font-size:13px}
 .row output{font:12px var(--mono);color:var(--muted);min-width:5ch;text-align:right}
 .row input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--accent);margin:0}
-select{width:100%;padding:7px 8px;border-radius:6px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:13px var(--font)}
+select{width:100%;padding:8px 9px;border-radius:10px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:13px var(--font)}
 .cl{display:flex;flex-direction:column;gap:6px}
 .crow{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px}
 .crow input[type=color]{width:34px;height:28px;padding:0;border:1px solid var(--line);border-radius:5px;background:var(--field);cursor:pointer}
@@ -47,13 +53,18 @@ select{width:100%;padding:7px 8px;border-radius:6px;border:1px solid var(--line)
 .crow .nm small{display:block;font:11.5px var(--mono);color:var(--muted)}
 .crow label.sw{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
 .thumbs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.thumbs canvas{width:100%;height:auto;aspect-ratio:1;border:1px solid var(--line);border-radius:6px;background:repeating-conic-gradient(var(--line) 0 25%,transparent 0 50%) 0 0/12px 12px}
+.thumbs canvas{width:100%;height:auto;aspect-ratio:1;border:1px solid var(--line);border-radius:10px;background:repeating-conic-gradient(var(--line) 0 25%,transparent 0 50%) 0 0/12px 12px}
 .thumbs figcaption{font-size:11.5px;color:var(--muted);margin-top:3px}
 figure{margin:0}
 .stage{position:relative;background:var(--viewport);min-width:0;min-height:0}
 #gl{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#views{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+.vp{position:relative;min-width:0;min-height:0;box-shadow:inset 0 0 0 1px var(--line);touch-action:none;user-select:none;-webkit-user-select:none}
+.vp .lb{position:absolute;right:10px;top:46px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);pointer-events:none}
+#views.max .vp{display:none}#views.max .vp.on{display:block;grid-column:1/-1;grid-row:1/-1}
 .hud{position:absolute;left:14px;right:14px;pointer-events:none;display:flex;gap:8px;flex-wrap:wrap}
-.hud.top{top:max(12px,env(safe-area-inset-top,0px))}
+.hud.top{top:46px}
+.tophint{position:absolute;left:50%;top:-34px;transform:translateX(-50%);white-space:nowrap;font-weight:600}
 .hud.bottom{bottom:max(12px,env(safe-area-inset-bottom,0px))}
 .chip{pointer-events:auto;background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font:12px var(--mono);color:var(--muted)}
 .chip.warn{color:var(--warn);border-color:var(--warn)}
@@ -63,17 +74,20 @@ figure{margin:0}
 .hint{font-size:12px;color:var(--muted);margin:0}
 .base{display:flex;align-items:center;gap:10px;font-size:13px}
 .base input{width:34px;height:28px;padding:0;border:1px solid var(--line);border-radius:5px;background:var(--field)}
-.seg{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .seg label{display:block;position:relative}
 .seg input{position:absolute;opacity:0;pointer-events:none}
 .seg span{display:block;text-align:center;padding:8px 6px;font-size:13px;font-weight:500;background:var(--field);cursor:pointer}
 .seg input:checked+span{background:var(--accent);color:var(--accent-ink)}
 .seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:-2px}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:8px 0 0}
+.lang button{border:0;background:var(--field);color:inherit;font:inherit;font-size:12px;font-weight:600;padding:5px 10px;cursor:pointer}
+.lang button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink)}
 .chk{display:flex;gap:8px;align-items:flex-start;font-size:13px}
 .chk input{margin-top:3px;accent-color:var(--accent)}
 .box{display:flex;flex-direction:column;gap:10px}
-.btn.ghost{padding:5px 10px;font-size:12px;margin-top:8px;color:var(--muted)}
-.btnrow{display:grid;grid-template-columns:1fr auto;gap:8px}
+.btn.ghost{padding:5px 12px;font-size:12px;margin:8px 0 0;color:var(--muted);border-radius:999px}
+.btnrow{display:grid;grid-template-columns:1fr;gap:8px}
 .numrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .numrow input{width:9.5em;padding:7px 8px;border-radius:6px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:13px var(--mono)}
 .meta b{color:var(--ink);font-weight:500}
@@ -90,38 +104,47 @@ figure{margin:0}
   .app{display:flex;flex-direction:column;height:auto;min-height:100%}
   .stage{order:-1;height:58vh;flex:none}
   .panel{overflow:visible;border-right:0}
+  .dock{position:sticky}
+  .dock .hint{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="three.min.js"></script>
+<script src="OrbitControls.js"></script>
 <div class="app" style="padding-left:max(0px,env(safe-area-inset-left,0px))">
   <aside class="panel">
-    <header class="brand"><h1>Decal 3D Studio</h1><p>STL + immagine PNG, esportazione multicolore per la stampa 3D</p><button class="btn ghost" id="bReset" type="button">Ripristina impostazioni</button></header>
+    <header class="brand"><h1>Decal 3D Studio</h1><p>STL / 3MF / OBJ + immagine, esportazione multicolore per la stampa 3D</p><div class="lang" role="group" aria-label="Language / Lingua"><button type="button" id="lEN" aria-pressed="true">EN</button><button type="button" id="lIT" aria-pressed="false">IT</button></div><button class="btn ghost" id="bReset" type="button">Ripristina impostazioni</button></header>
+    <div class="cards"><div class="col">
 
     <section>
       <h2><span class="step">1</span>Modello 3D</h2>
-      <div class="btnrow"><label class="btn file">Carica file STL<input id="fSTL" type="file" accept=".stl,model/stl"></label><button class="btn" id="bRstSTL" type="button">Ripristina STL</button></div>
-      <div class="meta" id="mInfo">Nessun modello caricato</div>
-      <div class="meta" id="mRep"></div>
+      <div class="btnrow"><label class="btn file"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M4 20h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Carica modello (STL, 3MF, OBJ)<input id="fSTL" type="file" accept=".stl,.obj,.3mf,model/stl,model/obj,model/3mf"></label><button class="btn" id="bRstSTL" type="button"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Ripristina STL</button></div>
+      <div class="meta" id="mInfo" data-dyn>Nessun modello caricato</div>
+      <div class="meta" id="mRep" data-dyn></div>
       <label for="nMax" style="font-size:13px">Numero massimo di triangoli</label>
       <div class="numrow"><input id="nMax" type="number" min="2000" max="5000000" step="10000" value="500000"><span class="meta">attuali: <b id="nCur">—</b></span></div>
-      <p class="hint" id="nHint">Oltre il 60% di questo limite il modello viene semplificato. Il resto serve ai dettagli di colore o rilievo.</p>
+      <p class="hint" id="nHint" data-dyn>Oltre il 60% di questo limite il modello viene semplificato. Il resto serve ai dettagli di colore o rilievo.</p>
     </section>
 
     <section id="secImg">
       <h2><span class="step">2</span>Immagine</h2>
-      <div class="btnrow"><label class="btn file">Carica PNG (meglio senza sfondo)<input id="fIMG" type="file" accept="image/png,image/webp,image/jpeg"></label><button class="btn" id="bRstIMG" type="button">Ripristina PNG</button></div>
+      <div class="btnrow"><label class="btn file"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M4 20h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Carica immagine (PNG, JPG, WebP, GIF, BMP, SVG)<input id="fIMG" type="file" accept="image/*,.png,.jpg,.jpeg,.webp,.gif,.bmp,.svg,.avif"></label><button class="btn" id="bRstIMG" type="button"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Ripristina immagine</button></div>
+        <label class="chk"><input type="checkbox" id="cBg"><span>Rimuovi lo sfondo (usa il colore dei bordi)</span></label>
+        <div id="bgBox" hidden>
+          <div class="row"><label for="rBg">Tolleranza sfondo</label><output id="oBg">40</output><input id="rBg" type="range" min="5" max="150" step="1" value="40"></div>
+          <label class="chk"><input type="checkbox" id="cBgIn"><span>Rimuovi anche le zone interne dello stesso colore</span></label>
+        </div>
       <div class="row"><label for="rK">Numero di colori</label><output id="oK">3</output><input id="rK" type="range" min="1" max="8" step="1" value="3"></div>
       <div class="thumbs">
         <figure><canvas id="cOrig" width="160" height="160"></canvas><figcaption>Originale</figcaption></figure>
         <figure><canvas id="cQuant" width="160" height="160"></canvas><figcaption>Come verrà stampata</figcaption></figure>
       </div>
-      <div class="cl" id="clusters"></div>
+      <div class="cl" id="clusters" data-dyn></div>
       <button class="btn" id="bSnap" type="button" data-only="color">Adatta ai filamenti più comuni</button>
       <div class="base"><input id="cBase" type="color" value="#2d3138" aria-label="Colore del modello"><span>Colore del modello (estrusore 1)</span></div>
     </section>
 
+    </div><div class="col">
     <section id="secMode">
       <h2><span class="step">3</span>Lavorazione</h2>
       <div class="seg" role="radiogroup" aria-label="Tipo di lavorazione">
@@ -151,12 +174,12 @@ figure{margin:0}
     <section>
       <h2><span class="step">4</span>Posizione sul modello</h2>
       <p class="hint">Clicca sul modello per mettere il centro dell'immagine. Trascina per ruotare la vista.</p>
-      <div class="row"><label for="rW" id="lW">Larghezza immagine</label><output id="oW">30 mm</output><input id="rW" type="range" min="5" max="120" step="0.5" value="30"></div>
+      <div class="row"><label for="rW" id="lW" data-dyn>Larghezza immagine</label><output id="oW">30 mm</output><input id="rW" type="range" min="5" max="120" step="0.5" value="30"></div>
       <div class="row"><label for="rRot">Rotazione</label><output id="oRot">0°</output><input id="rRot" type="range" min="-180" max="180" step="1" value="0"></div>
       <div class="row"><label for="rN">Numero di copie</label><output id="oN">1</output><input id="rN" type="range" min="1" max="12" step="1" value="1"></div>
       <label for="sMode" style="font-size:13px">Disposizione delle copie</label>
       <select id="sMode"><option value="grid">Vicine al punto cliccato</option><option value="ring">Attorno all'oggetto</option><option value="random">Sparse a caso sulla superficie</option></select>
-      <button class="btn" id="bShuf" type="button">Rimescola</button>
+      <button class="btn" id="bShuf" type="button"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Rimescola</button>
       <div class="row" data-only="color"><label for="rD">Spessore del colore</label><output id="oD">0.8 mm</output><input id="rD" type="range" min="0.2" max="3" step="0.1" value="0.8"></div>
       <div class="row"><label for="rAng">Inclinazione massima</label><output id="oAng">70°</output><input id="rAng" type="range" min="30" max="85" step="1" value="70"></div>
       <div class="row"><label for="rL">Dettaglio mesh</label><output id="oL">0.4 mm</output><input id="rL" type="range" min="0.15" max="1.5" step="0.05" value="0.4"></div>
@@ -165,19 +188,25 @@ figure{margin:0}
       <select id="sDir"><option value="normal">Perpendicolare alla superficie</option><option value="camera">Lungo la vista della camera</option></select>
     </section>
 
-    <section>
-      <h2><span class="step">5</span>Esporta</h2>
-      <button class="btn primary" id="bExp" type="button">Prepara file per la stampa (.zip)</button>
-      <div id="status">Pronto.</div>
+    </div></div>
+    <div class="dock">
+      <button class="btn primary" id="bExp" type="button"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Prepara file per la stampa (.zip)</button>
+      <div id="status" data-dyn>Pronto.</div>
       <p class="hint">Quando premi il pulsante, i buchi del modello vengono chiusi prima del calcolo. Lo zip contiene modello.3mf con un estrusore per colore, gli STL separati e un LEGGIMI.</p>
-    </section>
+    </div>
   </aside>
   <main class="stage">
     <canvas id="gl"></canvas>
+    <div id="views">
+      <div class="vp" id="vTop" role="group" aria-label="Alto" title="Doppio clic: ingrandisci / riduci"><span class="lb">Alto</span></div>
+      <div class="vp" id="v3d" role="group" aria-label="3D" title="Doppio clic: ingrandisci / riduci"><span class="lb">3D</span></div>
+      <div class="vp" id="vFront" role="group" aria-label="Fronte" title="Doppio clic: ingrandisci / riduci"><span class="lb">Fronte</span></div>
+      <div class="vp" id="vRight" role="group" aria-label="Destra" title="Doppio clic: ingrandisci / riduci"><span class="lb">Destra</span></div>
+    </div>
     <div class="empty" id="empty" hidden>Carica un file STL per iniziare</div>
-    <div class="prog" id="prog" hidden role="status" aria-live="polite"><div class="pbox"><div id="pLab">Elaborazione</div><div class="bar"><i id="pBar"></i></div><div class="pline"><span id="pPct">0%</span><button class="btn" id="bCancel" type="button">Annulla</button></div></div></div>
-    <div class="hud top"><span class="chip" id="chFil">filamenti <b>1</b></span><span class="chip" id="chTri">area colorata <b>0 mm²</b></span></div>
-    <div class="hud bottom"><span class="chip">trascina: ruota · rotella: zoom · clic: posiziona</span></div>
+    <div class="prog" id="prog" hidden role="status" aria-live="polite"><div class="pbox"><div id="pLab" data-dyn>Elaborazione</div><div class="bar"><i id="pBar"></i></div><div class="pline"><span id="pPct">0%</span><button class="btn" id="bCancel" data-dyn type="button">Annulla</button></div></div></div>
+    <div class="hud top"><span class="chip tophint">Doppio clic su una vista per ingrandirla / ridurla</span><span class="chip" id="chFil" data-dyn>filamenti <b>1</b></span><span class="chip" id="chTri" data-dyn>area colorata <b>0 mm²</b></span></div>
+    <div class="hud bottom"><span class="chip">trascina: ruota/sposta · rotella: zoom · clic: posiziona</span></div>
   </main>
 </div>
 <script>
@@ -209,6 +238,108 @@ function makeCore() { return (() => {
     while ((m = re.exec(txt))) arr.push(+m[1], +m[2], +m[3]);
     if (arr.length < 9 || arr.length % 9) throw new Error('File STL non valido');
     return Float32Array.from(arr);
+  }
+
+  function parseOBJ(text) {
+    const V = [], out = [];
+    const lines = text.split(/\r?\n/);
+    for (let i = 0; i < lines.length; i++) {
+      const l = lines[i]; if (l.charCodeAt(0) === 118 && l.charCodeAt(1) === 32) { const p = l.trim().split(/\s+/); V.push(+p[1], +p[2], +p[3]); }
+    }
+    const nv = V.length / 3;
+    for (let i = 0; i < lines.length; i++) {
+      let l = lines[i]; if (l.charCodeAt(0) !== 102 || l.charCodeAt(1) !== 32) continue;
+      const ids = l.trim().split(/\s+/).slice(1).map((s) => { let k = parseInt(s, 10); return k < 0 ? nv + k : k - 1; }).filter((k) => k >= 0 && k < nv);
+      for (let k = 1; k + 1 < ids.length; k++) for (const j of [ids[0], ids[k], ids[k + 1]]) out.push(V[3 * j], V[3 * j + 1], V[3 * j + 2]);
+    }
+    if (out.length < 9) throw new Error('File OBJ senza facce valide');
+    return Float32Array.from(out);
+  }
+
+  async function unzipAll(ab) {
+    const u = new Uint8Array(ab), dv = new DataView(ab); let e = -1;
+    for (let i = u.length - 22; i >= Math.max(0, u.length - 70000); i--) if (dv.getUint32(i, true) === 0x06054b50) { e = i; break; }
+    if (e < 0) throw new Error('File 3MF non valido (non è uno zip)');
+    const n = dv.getUint16(e + 10, true); let p = dv.getUint32(e + 16, true); const files = {};
+    for (let i = 0; i < n; i++) {
+      if (dv.getUint32(p, true) !== 0x02014b50) break;
+      const method = dv.getUint16(p + 10, true), cs = dv.getUint32(p + 20, true), nl = dv.getUint16(p + 28, true), el = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true), off = dv.getUint32(p + 42, true);
+      const name = new TextDecoder().decode(u.subarray(p + 46, p + 46 + nl)); p += 46 + nl + el + cl;
+      if (!/\.(model|rels)$/i.test(name)) continue;
+      const ds = off + 30 + dv.getUint16(off + 26, true) + dv.getUint16(off + 28, true); const raw = u.subarray(ds, ds + cs);
+      if (method === 0) files[name] = raw;
+      else if (method === 8) {
+        const s = new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+        files[name] = new Uint8Array(await new Response(s).arrayBuffer());
+      }
+    }
+    return files;
+  }
+
+  async function parse3MF(ab) {
+    const files = await unzipAll(ab); const names = Object.keys(files).filter((k) => /\.model$/i.test(k));
+    if (!names.length) throw new Error('Nel 3MF non trovo nessun modello');
+    const main = names.find((k) => /^\/?3D\/3dmodel\.model$/i.test(k)) || names[0];
+    const docs = {};
+    const load = (name) => {
+      const key = names.find((k) => k.replace(/^\//, '').toLowerCase() === name.replace(/^\//, '').toLowerCase());
+      if (!key) return null;
+      if (!docs[key]) {
+        const d = new DOMParser().parseFromString(new TextDecoder().decode(files[key]), 'application/xml');
+        if (d.getElementsByTagName('parsererror').length) throw new Error('XML del 3MF non valido');
+        const objs = {}; const all = d.getElementsByTagName('*');
+        const unit = { micron: 0.001, millimeter: 1, centimeter: 10, inch: 25.4, foot: 304.8, meter: 1000 }[d.documentElement.getAttribute('unit') || 'millimeter'] || 1;
+        for (const o of all) {
+          if (o.localName !== 'object') continue;
+          const rec = { tris: null, comps: [] }; const mesh = [...o.children].find((c) => c.localName === 'mesh');
+          if (mesh) {
+            const vs = [], ts = [];
+            for (const g of mesh.children) {
+              if (g.localName === 'vertices') for (const v of g.children) vs.push(+v.getAttribute('x'), +v.getAttribute('y'), +v.getAttribute('z'));
+              if (g.localName === 'triangles') for (const t of g.children) ts.push(+t.getAttribute('v1'), +t.getAttribute('v2'), +t.getAttribute('v3'));
+            }
+            rec.tris = { vs, ts };
+          }
+          const cs = [...o.children].find((c) => c.localName === 'components');
+          if (cs) for (const c of cs.children) rec.comps.push({ id: c.getAttribute('objectid'), path: c.getAttribute('p:path') || c.getAttribute('path'), m: c.getAttribute('transform') });
+          objs[o.getAttribute('id')] = rec;
+        }
+        const items = [...all].filter((x) => x.localName === 'item').map((x) => ({ id: x.getAttribute('objectid'), m: x.getAttribute('transform') }));
+        docs[key] = { objs, items, unit };
+      }
+      return docs[key];
+    };
+    const ident = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+    const toM = (s) => { if (!s) return ident; const a = s.trim().split(/\s+/).map(Number); return a.length < 12 ? ident : [a[0], a[1], a[2], 0, a[3], a[4], a[5], 0, a[6], a[7], a[8], 0, a[9], a[10], a[11], 1]; };
+    const mul = (A, B) => { const R = new Array(16).fill(0); for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) for (let k = 0; k < 4; k++) R[4 * i + j] += A[4 * i + k] * B[4 * k + j]; return R; };
+    const out = []; let guard = 0;
+    function emit(docName, id, M, depth) {
+      if (depth > 8 || guard++ > 200000) return;
+      const doc = load(docName); const o = doc && doc.objs[id]; if (!o) return;
+      if (o.tris) {
+        const { vs, ts } = o.tris; const det = M[0] * (M[5] * M[10] - M[6] * M[9]) - M[1] * (M[4] * M[10] - M[6] * M[8]) + M[2] * (M[4] * M[9] - M[5] * M[8]); const flip = det < 0;
+        const k = doc.unit;
+        for (let t = 0; t < ts.length; t += 3) {
+          const idx = flip ? [ts[t], ts[t + 2], ts[t + 1]] : [ts[t], ts[t + 1], ts[t + 2]];
+          for (const j of idx) { const x = vs[3 * j], y = vs[3 * j + 1], z = vs[3 * j + 2];
+            out.push((x * M[0] + y * M[4] + z * M[8] + M[12]) * k, (x * M[1] + y * M[5] + z * M[9] + M[13]) * k, (x * M[2] + y * M[6] + z * M[10] + M[14]) * k); }
+        }
+      }
+      for (const c of o.comps) emit(c.path || docName, c.id, mul(toM(c.m), M), depth + 1);
+    }
+    const md = load(main);
+    if (md.items.length) for (const it of md.items) emit(main, it.id, toM(it.m), 0);
+    else for (const id in md.objs) emit(main, id, ident, 0);
+    if (out.length < 9) throw new Error('Il 3MF non contiene triangoli');
+    return Float32Array.from(out);
+  }
+
+  async function parseModel(file) {
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    if (ext === 'obj') return parseOBJ(await file.text());
+    if (ext === '3mf') return parse3MF(await file.arrayBuffer());
+    if (ext === 'stl') return parseSTL(await file.arrayBuffer());
+    throw new Error('Formato non supportato: usa STL, 3MF oppure OBJ');
   }
 
   function weld(raw) {
@@ -533,46 +664,97 @@ function makeCore() { return (() => {
   }
 
   /* ---------- chirurgia della mesh: base svuotata + gusci colorati ---------- */
+  // toglie i punti in cui il bordo di un colore tocca se stesso in un solo vertice (renderebbero la mesh non valida)
+  function fixPinches(res) {
+    const { T, lab } = res; const nT = T.length / 3; let total = 0;
+    for (let pass = 0; pass < 8; pass++) {
+      const vt = new Map();
+      for (let t = 0; t < nT; t++) if (lab[t]) for (let k = 0; k < 3; k++) { const v = T[3 * t + k]; if (!vt.has(v)) vt.set(v, []); }
+      for (let t = 0; t < nT; t++) for (let k = 0; k < 3; k++) { const l = vt.get(T[3 * t + k]); if (l) l.push(t); }
+      let changed = 0;
+      for (const [v, F] of vt) {
+        if (F.length < 3) continue;
+        const first = new Map(), nextV = new Map();
+        for (const t of F) { let k = 0; while (T[3 * t + k] !== v) k++; const a = T[3 * t + (k + 1) % 3], b = T[3 * t + (k + 2) % 3]; first.set(a, t); nextV.set(t, b); }
+        if (first.size !== F.length) continue;
+        const cyc = [F[0]]; let t = first.get(nextV.get(F[0])); let ok = true;
+        while (t !== F[0]) { if (t === undefined || cyc.length > F.length) { ok = false; break; } cyc.push(t); t = first.get(nextV.get(t)); }
+        if (!ok || cyc.length !== F.length) continue;
+        const n = cyc.length; const labs = new Set(); for (const q of cyc) if (lab[q]) labs.add(lab[q]);
+        const classes = [(l) => l > 0]; for (const k of labs) classes.push((l) => l === k);
+        for (const cl of classes) {
+          const flags = cyc.map((q) => cl(lab[q])); let trans = 0; for (let i = 0; i < n; i++) if (flags[i] !== flags[(i + n - 1) % n]) trans++;
+          if (trans <= 2) continue;
+          let s0 = 0; while (!(flags[s0] && !flags[(s0 + n - 1) % n])) s0++;
+          const runs = []; let i = s0, cnt = 0;
+          while (cnt < n) { if (flags[i % n]) { const r = []; while (cnt < n && flags[i % n]) { r.push(cyc[i % n]); i++; cnt++; } runs.push(r); } else { i++; cnt++; } }
+          runs.sort((x, y) => y.length - x.length);
+          for (let r = 1; r < runs.length; r++) for (const q of runs[r]) if (lab[q]) { lab[q] = 0; changed++; }
+        }
+      }
+      total += changed; if (!changed) break;
+    }
+    return total;
+  }
   function buildParts(res, frames, d, nLabels) {
-    const { P, T, lab, frm } = res; const nV = P.length / 3, nT = T.length / 3;
-    const vn = new Float64Array(nV * 3), vd = new Float64Array(nV * 3); const used = new Uint8Array(nV);
-    for (let t = 0; t < nT; t++) {
-      if (!lab[t]) continue;
-      const a = T[3 * t], b = T[3 * t + 1], c = T[3 * t + 2];
-      const ux = P[3 * b] - P[3 * a], uy = P[3 * b + 1] - P[3 * a + 1], uz = P[3 * b + 2] - P[3 * a + 2];
-      const wx = P[3 * c] - P[3 * a], wy = P[3 * c + 1] - P[3 * a + 1], wz = P[3 * c + 2] - P[3 * a + 2];
-      const n = [uy * wz - uz * wy, uz * wx - ux * wz, ux * wy - uy * wx];
-      const fv = frames[frm[t]].v; const nl_ = len(n) || 1;
-      for (const q of [a, b, c]) { vn[3 * q] += n[0]; vn[3 * q + 1] += n[1]; vn[3 * q + 2] += n[2]; vd[3 * q] += fv[0] * nl_; vd[3 * q + 1] += fv[1] * nl_; vd[3 * q + 2] += fv[2] * nl_; used[q] = 1; }
-    }
-    const PP = P.slice(); const sidx = new Int32Array(nV).fill(-1);
-    for (let i = 0; i < nV; i++) {
-      if (!used[i]) continue;
-      const n = norm([vn[3 * i], vn[3 * i + 1], vn[3 * i + 2]]);
-      const V = norm([vd[3 * i], vd[3 * i + 1], vd[3 * i + 2]]);
-      const c = Math.min(1, Math.max(0.5, dot(n, V))); const h = d / c;
-      sidx[i] = PP.length / 3; PP.push(P[3 * i] - h * V[0], P[3 * i + 1] - h * V[1], P[3 * i + 2] - h * V[2]);
-    }
+    const { P, T, lab, frm } = res; const nT = T.length / 3;
     const ek = (a, b) => (a < b ? a * KEYM + b : b * KEYM + a);
     const em = new Map();
     for (let t = 0; t < nT; t++) if (lab[t]) for (let k = 0; k < 3; k++) em.set(ek(T[3 * t + k], T[3 * t + (k + 1) % 3]), []);
     for (let t = 0; t < nT; t++) for (let k = 0; k < 3; k++) { const e = em.get(ek(T[3 * t + k], T[3 * t + (k + 1) % 3])); if (e) e.push(t); }
+    // Un vertice del bordo può toccare più zone separate (punto di contatto). Ogni zona riceve il suo vertice "sceso",
+    // così nessun lato è condiviso da più di due facce. La base separa le zone colorate o non colorate; ogni colore separa le sue.
+    const PP = P.slice();
+    const corner = (t, v) => (T[3 * t] === v ? 3 * t : T[3 * t + 1] === v ? 3 * t + 1 : 3 * t + 2);
+    function shifts(same) {
+      const par = new Int32Array(nT * 3); for (let i = 0; i < par.length; i++) par[i] = i;
+      const find = (x) => { while (par[x] !== x) { par[x] = par[par[x]]; x = par[x]; } return x; };
+      for (let t = 0; t < nT; t++) {
+        if (!lab[t]) continue;
+        for (let k = 0; k < 3; k++) {
+          const p = T[3 * t + k], q = T[3 * t + (k + 1) % 3]; const o = em.get(ek(p, q)).find((x) => x !== t);
+          if (o === undefined || !lab[o] || (same && lab[o] !== lab[t])) continue;
+          par[find(3 * t + k)] = find(corner(o, p)); par[find(3 * t + (k + 1) % 3)] = find(corner(o, q));
+        }
+      }
+      const comp = new Int32Array(nT * 3).fill(-1); const cOrig = [], cn = [], cd = [];
+      for (let t = 0; t < nT; t++) {
+        if (!lab[t]) continue;
+        const a = T[3 * t], b = T[3 * t + 1], c = T[3 * t + 2];
+        const ux = P[3 * b] - P[3 * a], uy = P[3 * b + 1] - P[3 * a + 1], uz = P[3 * b + 2] - P[3 * a + 2];
+        const wx = P[3 * c] - P[3 * a], wy = P[3 * c + 1] - P[3 * a + 1], wz = P[3 * c + 2] - P[3 * a + 2];
+        const n = [uy * wz - uz * wy, uz * wx - ux * wz, ux * wy - uy * wx]; const fv = frames[frm[t]].v; const nl_ = len(n) || 1;
+        for (let k = 0; k < 3; k++) {
+          const r = find(3 * t + k); let id = comp[r];
+          if (id < 0) { id = cOrig.length; comp[r] = id; cOrig.push(T[3 * t + k]); cn.push(0, 0, 0); cd.push(0, 0, 0); }
+          cn[3 * id] += n[0]; cn[3 * id + 1] += n[1]; cn[3 * id + 2] += n[2]; cd[3 * id] += fv[0] * nl_; cd[3 * id + 1] += fv[1] * nl_; cd[3 * id + 2] += fv[2] * nl_;
+        }
+      }
+      const idx = new Int32Array(cOrig.length);
+      for (let id = 0; id < cOrig.length; id++) {
+        const v0 = cOrig[id]; const n = norm([cn[3 * id], cn[3 * id + 1], cn[3 * id + 2]]); const V = norm([cd[3 * id], cd[3 * id + 1], cd[3 * id + 2]]);
+        const c = Math.min(1, Math.max(0.5, dot(n, V))); const h = d / c;
+        idx[id] = PP.length / 3; PP.push(P[3 * v0] - h * V[0], P[3 * v0 + 1] - h * V[1], P[3 * v0 + 2] - h * V[2]);
+      }
+      return (t, k) => idx[comp[find(3 * t + k)]];
+    }
+    const sBase = shifts(false), sCol = shifts(true);
     const parts = Array.from({ length: nLabels + 1 }, () => []);
     for (let t = 0; t < nT; t++) {
       const Lb = lab[t]; const a = T[3 * t], b = T[3 * t + 1], c = T[3 * t + 2];
       if (!Lb) { parts[0].push(a, b, c); continue; }
-      const sa = sidx[a], sb = sidx[b], sc = sidx[c];
-      parts[Lb].push(a, b, c, sa, sc, sb);
-      parts[0].push(sa, sb, sc);
-      const ring = [a, b, c], sring = [sa, sb, sc];
+      const sb3 = [0, 1, 2].map((k) => sBase(t, k)), sc3 = [0, 1, 2].map((k) => sCol(t, k));
+      parts[Lb].push(a, b, c, sc3[0], sc3[2], sc3[1]);
+      parts[0].push(sb3[0], sb3[1], sb3[2]);
+      const ring = [a, b, c];
       for (let k = 0; k < 3; k++) {
-        const p = ring[k], q = ring[(k + 1) % 3], sp = sring[k], sq = sring[(k + 1) % 3];
-        const list = em.get(ek(p, q)); let nl = 0;
-        const other = list.find((x) => x !== t); if (other !== undefined) nl = lab[other];
+        const p = ring[k], q = ring[(k + 1) % 3];
+        const other = em.get(ek(p, q)).find((x) => x !== t); const nl = other !== undefined ? lab[other] : 0;
         if (nl !== Lb) {
+          const sp = sc3[k], sq = sc3[(k + 1) % 3];
           parts[Lb].push(p, sp, sq, p, sq, q);
-          if (nl === 0) parts[0].push(p, sq, sp, p, q, sq);
         }
+        if (nl === 0) { const sp = sb3[k], sq = sb3[(k + 1) % 3]; parts[0].push(p, sq, sp, p, q, sq); }
       }
     }
     const out = [];
@@ -685,21 +867,31 @@ function makeCore() { return (() => {
       if (!dm.has(b * KEYM + a)) { const l = out.get(a); if (l) l.push(b); else out.set(a, [b]); nb++; }
     }
     const Tn = Array.from(T); const nb0 = nb;
-    while (out.size) {
-      const s0 = out.keys().next().value; const path = [s0]; let cur = s0; let closed = false;
-      for (let guard = 0; guard < 200000; guard++) {
-        const l = out.get(cur); if (!l || !l.length) break;
-        const nx = l.shift(); if (!l.length) out.delete(cur); nb--;
-        if (nx === s0) { closed = true; break; } path.push(nx); cur = nx;
-      }
-      if (!out.has(s0) || !closed) { /* bordo non chiuso: lascia com'è */ }
-      if (!closed || path.length < 3) continue;
-      if (!fill) { rep.holes++; continue; }
-      if (path.length === 3) { Tn.push(path[2], path[1], path[0]); rep.holes++; rep.holeTris++; continue; }
+    const fillLoop = (path) => {
+      if (path.length < 3) return;
+      rep.holes++; if (!fill) return;
+      if (path.length === 3) { Tn.push(path[2], path[1], path[0]); rep.holeTris++; return; }
       let cx = 0, cy = 0, cz = 0; for (const v of path) { cx += P[3 * v]; cy += P[3 * v + 1]; cz += P[3 * v + 2]; }
       const ci = P.length / 3; P.push(cx / path.length, cy / path.length, cz / path.length);
       for (let i = 0; i < path.length; i++) Tn.push(path[(i + 1) % path.length], path[i], ci);
-      rep.holes++; rep.holeTris += path.length;
+      rep.holeTris += path.length;
+    };
+    const starts = Array.from(out.keys()); let filledEdges = 0;
+    for (const s0 of starts) {
+      while (out.has(s0)) {
+        const path = [s0]; const pos = new Map([[s0, 0]]); let cur = s0;
+        for (let guard = 0; guard < 400000; guard++) {
+          const l = out.get(cur); if (!l || !l.length) break;
+          const nx = l.shift(); if (!l.length) out.delete(cur); nb--;
+          if (nx === s0) { fillLoop(path); filledEdges += path.length; path.length = 0; break; }
+          if (pos.has(nx)) { // il bordo si incrocia: chiudi subito il giro piu' piccolo e continua
+            const i = pos.get(nx); const sub = path.splice(i); for (const v of sub) pos.delete(v);
+            fillLoop(sub); filledEdges += sub.length; path.push(nx); pos.set(nx, path.length - 1); cur = nx; continue;
+          }
+          pos.set(nx, path.length); path.push(nx); cur = nx;
+        }
+        if (path.length) break; // catena non chiusa: lasciala com'e'
+      }
     }
     rep.open = fill ? nb : nb0; rep.filled = fill;
     // 4) compattazione dei vertici
@@ -891,26 +1083,31 @@ function makeCore() { return (() => {
     return out;
   }
 
-  async function buildPackage(parts, bbox, prog) {
+  async function buildPackage(parts, bbox, prog, lang) {
+    const it = lang === 'it';
     // posiziona il pezzo al centro di un piano 256x256 con la base a z=0
     const off = [128 - (bbox.min[0] + bbox.max[0]) / 2, 128 - (bbox.min[1] + bbox.max[1]) / 2, -bbox.min[2]];
     const te = new TextEncoder();
     const inner = await zip(model3MF(parts, off), prog ? (f) => prog(f * 0.5) : null);
-    const entries = [{ name: 'modello.3mf', data: inner, store: true }];
-    const lines = ['Decal 3D Studio - stampa multicolore', '', 'Estrusori / filamenti da assegnare:'];
+    const f3 = it ? 'modello.3mf' : 'model.3mf';
+    const entries = [{ name: f3, data: inner, store: true }];
+    const lines = it ? ['Decal 3D Studio - stampa multicolore', '', 'Estrusori / filamenti da assegnare:'] : ['Decal 3D Studio - multicolor printing', '', 'Extruders / filaments to assign:'];
     parts.forEach((p, k) => {
       const nm = String(k).padStart(2, '0') + '_' + p.name.toLowerCase().replace(/[^a-z0-9]+/g, '_');
       entries.push({ name: 'stl/' + nm + '.stl', data: stlBinary(p.V, p.I, off) });
-      lines.push('  Estrusore ' + p.extruder + ' = ' + p.name + ' (' + p.color.toUpperCase() + ')  -> stl/' + nm + '.stl');
+      lines.push('  ' + (it ? 'Estrusore ' : 'Extruder ') + p.extruder + ' = ' + p.name + ' (' + p.color.toUpperCase() + ')  -> stl/' + nm + '.stl');
     });
-    lines.push('', 'Come usarlo:', '1) Apri modello.3mf nel tuo slicer (OrcaSlicer, Bambu Studio, PrusaSlicer). Le parti arrivano gia con gli estrusori assegnati.',
+    if (it) lines.push('', 'Come usarlo:', '1) Apri modello.3mf nel tuo slicer (OrcaSlicer, Bambu Studio, PrusaSlicer). Le parti arrivano gia con gli estrusori assegnati.',
       '2) Se i colori non vengono riconosciuti: importa insieme tutti gli STL della cartella stl, rispondi Si a "carica come un unico oggetto con piu parti" e assegna i filamenti a ogni parte.',
       '3) Le parti sono solide e non si sovrappongono: la base ha gia il guscio colorato scavato.');
-    entries.push({ name: 'LEGGIMI.txt', data: te.encode(lines.join('\n')) });
+    else lines.push('', 'How to use it:', '1) Open model.3mf in your slicer (OrcaSlicer, Bambu Studio, PrusaSlicer). The parts arrive with the extruders already assigned.',
+      '2) If the colors are not recognized: import all the STL files in the stl folder together, answer Yes to "load as a single object with multiple parts" and assign the filaments to each part.',
+      '3) The parts are solid and do not overlap: the base already has the colored shell carved out.');
+    entries.push({ name: it ? 'LEGGIMI.txt' : 'README.txt', data: te.encode(lines.join('\n')) });
     return zip(entries, prog ? (f) => prog(0.5 + f * 0.5) : null);
   }
 
-  return { triAreaSum, finishModel, repair, decimate, parseSTL, weld, makeFrame, avgNormal, displace, rayHit, randomSurface, quantize, computeDecal, buildParts, openEdges, volumeOf, buildPackage, zip, crc32, stlBinary, model3MF };
+  return { parseOBJ, parse3MF, parseModel, fixPinches, triAreaSum, finishModel, repair, decimate, parseSTL, weld, makeFrame, avgNormal, displace, rayHit, randomSurface, quantize, computeDecal, buildParts, openEdges, volumeOf, buildPackage, zip, crc32, stlBinary, model3MF };
 })(); }
 /*CORE_END*/
 
@@ -970,10 +1167,11 @@ function makeHandlers(Core) {
         prog(0.62, 'Costruisco le parti');
         if (j.kind === 'relief') {
           const o = Core.displace(res, j.frames, j.hm, j.amount);
-          parts = [{ label: 0, V: o.V, I: o.I, name: 'Modello con rilievo', color: j.baseColor, extruder: 1 }];
+          parts = [{ label: 0, V: o.V, I: o.I, name: j.lang === 'it' ? 'Modello con rilievo' : 'Model with relief', color: j.baseColor, extruder: 1 }];
         } else {
+          Core.fixPinches(res);
           parts = Core.buildParts(res, j.frames, j.depth, j.nLabels); let ex = 2;
-          parts.forEach((q) => { if (q.label === 0) { q.name = 'Base'; q.color = j.baseColor; q.extruder = 1; } else { q.name = 'Colore ' + q.label; q.color = j.colors[q.label - 1]; q.extruder = ex++; } });
+          parts.forEach((q) => { if (q.label === 0) { q.name = 'Base'; q.color = j.baseColor; q.extruder = 1; } else { q.name = (j.lang === 'it' ? 'Colore ' : 'Color ') + q.label; q.color = j.colors[q.label - 1]; q.extruder = ex++; } });
         }
         capped = res.capped; const total = tri(parts);
         if (total <= j.limit || attempt >= 2 || capped) break;
@@ -981,7 +1179,7 @@ function makeHandlers(Core) {
       }
       const total = tri(parts); prog(0.7, 'Controllo la mesh');
       const open = parts.reduce((a, q) => a + Core.openEdges(q.I), 0);
-      return Core.buildPackage(parts, { min: m.min, max: m.max }, (f) => prog(0.75 + 0.25 * f, 'Creo il pacchetto')).then((zip) => ({ zip, tris: total, open, parts: parts.length, capped, attempts: attempt, L, repair: fixed.report }));
+      return Core.buildPackage(parts, { min: m.min, max: m.max }, (f) => prog(0.75 + 0.25 * f, 'Creo il pacchetto'), j.lang).then((zip) => ({ zip, tris: total, open, parts: parts.length, capped, attempts: attempt, L, repair: fixed.report }));
     },
   };
 }
@@ -1115,12 +1313,34 @@ const Pat = (() => {
 const Core = makeCore();
 (function () {
   const $ = (id) => document.getElementById(id);
-  const S = { raw: null, model: null, fullTris: 0, mesh: null, texMesh: null, overlay: [], arrow: null, grid: null, img: null, imgData: null, clusters: [], place: null, seed: 1, hmc: null, busyPrev: false, pendPrev: false, exporting: false, lastTarget: -1, missing: 0 };
+  const S = { raw: null, model: null, fullTris: 0, mesh: null, texMesh: null, overlay: [], arrow: null, grid: null, img: null, imgData: null, src: null, info: null, rep: null, chip: { n: 1, area: 0, lab: 'area colorata' }, clusters: [], place: null, seed: 1, hmc: null, busyPrev: false, pendPrev: false, exporting: false, lastTarget: -1, missing: 0 }; window.DecalState = S;
   const FIL = ['#FFFFFF', '#111111', '#E53935', '#F57C00', '#FDD835', '#43A047', '#1E88E5', '#8E24AA', '#EC407A', '#8D6E63', '#9E9E9E', '#00ACC1', '#7CB342', '#3949AB', '#D4B483'];
   const hex = (c) => '#' + c.map((x) => Math.max(0, Math.min(255, Math.round(x))).toString(16).padStart(2, '0')).join('');
   const unhex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
-  const nf = (n) => Math.round(n).toLocaleString('it');
-  const setStatus = (t, err) => { const s = $('status'); s.textContent = t; s.className = err ? 'err' : ''; };
+  /* ---------- lingua ---------- */
+  let LANG = 'en';
+  const EN = {"STL / 3MF / OBJ + immagine, esportazione multicolore per la stampa 3D": "STL / 3MF / OBJ + image, multicolor export for 3D printing", "Ripristina impostazioni": "Reset settings", "Modello 3D": "3D model", "Carica modello (STL, 3MF, OBJ)": "Load model (STL, 3MF, OBJ)", "Ripristina STL": "Reset model", "Numero massimo di triangoli": "Maximum number of triangles", "attuali:": "current:", "Immagine": "Image", "Carica immagine (PNG, JPG, WebP, GIF, BMP, SVG)": "Load image (PNG, JPG, WebP, GIF, BMP, SVG)", "Ripristina immagine": "Reset image", "Rimuovi lo sfondo (usa il colore dei bordi)": "Remove background (uses the edge color)", "Tolleranza sfondo": "Background tolerance", "Rimuovi anche le zone interne dello stesso colore": "Also remove inner areas of the same color", "Numero di colori": "Number of colors", "Originale": "Original", "Come verrà stampata": "As it will be printed", "Adatta ai filamenti più comuni": "Snap to common filament colors", "Colore del modello": "Model color", "Colore del modello (estrusore 1)": "Model color (extruder 1)", "Lavorazione": "Processing", "Tipo di lavorazione": "Processing type", "Colore": "Color", "Rilievo / sotto": "Relief / engraving", "Effetto": "Effect", "Mattone": "Brick", "Pietra": "Stone", "Spirale": "Spiral", "Bolle": "Bubbles", "Crepe": "Cracks", "Lana": "Wool", "Fiocchi di neve": "Snowflakes", "Triangoli uniti": "Joined triangles", "Numeri": "Numbers", "Stelle": "Stars", "Dal PNG caricato (sagoma)": "From loaded image (silhouette)", "Dal PNG caricato (luminosità)": "From loaded image (brightness)", "Rilievo o sottorilievo": "Relief or engraving", "Rilievo": "Relief", "Sottorilievo": "Engraving", "Altezza o profondità": "Height or depth", "Dimensione del motivo": "Pattern size", "Inverti il motivo (per esempio le fughe invece dei mattoni)": "Invert the pattern (e.g. the grout instead of the bricks)", "Copri tutta la superficie visibile da questa direzione": "Cover the whole surface visible from this direction", "Il rilievo è nello stesso colore del modello: serve un solo filamento.": "The relief has the same color as the model: only one filament is needed.", "Posizione sul modello": "Position on the model", "Clicca sul modello per mettere il centro dell'immagine. Trascina per ruotare la vista.": "Click the model to place the center of the image. Drag to rotate the view.", "Larghezza immagine": "Image width", "Larghezza area": "Area width", "Rotazione": "Rotation", "Numero di copie": "Number of copies", "Disposizione delle copie": "Copy layout", "Vicine al punto cliccato": "Near the clicked point", "Attorno all'oggetto": "Around the object", "Sparse a caso sulla superficie": "Scattered randomly on the surface", "Rimescola": "Shuffle", "Spessore del colore": "Color thickness", "Inclinazione massima": "Maximum slope", "Dettaglio mesh": "Mesh detail", "Elimina macchie sotto": "Remove specks below", "Direzione di proiezione": "Projection direction", "Perpendicolare alla superficie": "Perpendicular to the surface", "Lungo la vista della camera": "Along the camera view", "Esporta": "Export", "Prepara file per la stampa (.zip)": "Prepare files for printing (.zip)", "Quando premi il pulsante, i buchi del modello vengono chiusi prima del calcolo. Lo zip contiene modello.3mf con un estrusore per colore, gli STL separati e un LEGGIMI.": "When you press the button, holes in the model are closed before the calculation. The zip contains model.3mf with one extruder per color, the separate STL files and a README.", "Carica un file STL per iniziare": "Load a model file to get started", "Elaborazione": "Processing", "Annulla": "Cancel", "trascina: ruota/sposta · rotella: zoom · clic: posiziona": "drag: rotate/pan · wheel: zoom · click: place", "Doppio clic su una vista per ingrandirla / ridurla": "Double-click a view to zoom in / out", "Pronto.": "Ready.", "Nessun modello caricato": "No model loaded", "Nessun modello caricato.": "No model loaded.", "Oltre il 60% di questo limite il modello viene semplificato. Il resto serve ai dettagli di colore o rilievo.": "Above 60% of this limit the model is simplified. The rest is used for color or relief detail.", " · originale %1": " · original %1", "filamenti": "filaments", " · oltre 4, serve più di un AMS": " · over 4, you need more than one AMS", "area": "area", "area colorata": "colored area", "area lavorata": "worked area", "%1 facce girate nel verso giusto": "%1 faces flipped to the right direction", "%1 triangoli duplicati tolti": "%1 duplicate triangles removed", "Sistemato: %1.": "Fixed: %1.", "Controllo eseguito: nessun problema trovato.": "Check done: no problems found.", " Trovati %1 buchi: verranno chiusi quando prepari il file per la stampa.": " Found %1 holes: they will be closed when you prepare the file for printing.", " %1 lati condivisi da più di due facce.": " %1 edges shared by more than two faces.", "Non riesco a caricare la libreria 3D. Controlla la connessione e ricarica la pagina.": "Cannot load the 3D library. Check your connection and reload the page.", "Modello rimosso. Carica un file STL per continuare.": "Model removed. Load a model file to continue.", "Nessuna immagine caricata.": "No image loaded.", "Colore %1": "Color %1", "%1% dell'immagine · estrusore %2": "%1% of the image · extruder %2", "stampa": "print", "Immagine rimossa. Carica un'immagine per continuare.": "Image removed. Load an image to continue.", "Carica un PNG per usarlo come rilievo.": "Load an image to use it as relief.", "Carica un PNG per vedere i colori sul modello.": "Load an image to see the colors on the model.", "%1 copie posizionate. ": "%1 copies placed. ", "Anteprima a risoluzione ridotta: il file finale usa il dettaglio mesh scelto.": "Reduced-resolution preview: the final file uses the chosen mesh detail.", "Nessuna area lavorata qui: sposta l'area sulla superficie del modello.": "No worked area here: move the area onto the model surface.", "%1 copie posizionate": "%1 copies placed", " su %1 (per le altre non c'è posto sulla superficie)": " out of %1 (there is no room on the surface for the others)", "Anteprima aggiornata.": "Preview updated.", "Nessuna area colorata qui: sposta l'immagine sulla superficie del modello.": "No colored area here: move the image onto the model surface.", "Errore di calcolo: %1": "Calculation error: %1", "Clicca sul modello per applicare la nuova direzione.": "Click the model to apply the new direction.", "Impostazioni ripristinate.": "Settings reset.", "La tolleranza è troppo alta: lo sfondo ha cancellato tutta l'immagine.": "The tolerance is too high: the background removal erased the whole image.", "Non riesco a leggere questa immagine. Formati supportati dal browser: PNG, JPG, WebP, GIF, BMP, SVG.": "Cannot read this image. Formats supported by the browser: PNG, JPG, WebP, GIF, BMP, SVG.", "Annullo l'esportazione…": "Cancelling the export…", "Esportazione annullata.": "Export cancelled.", "Carica un modello e scegli una posizione.": "Load a model and choose a position.", "Carica un'immagine, oppure scegli un effetto che non lo richiede.": "Load an image, or choose an effect that does not need one.", "Preparo il calcolo…": "Preparing the calculation…", "In attesa del salvataggio…": "Waiting for the save…", "Fatto: il file è stato salvato.": "Done: the file has been saved.", "Salvato. ": "Saved. ", "%1 buchi chiusi. ": "%1 holes closed. ", " parte": " part", " parti": " parts", ", %1 triangoli (limite %2), %3 MB.": ", %1 triangles (limit %2), %3 MB.", " Il file supera il limite: abbassa il limite per semplificare di più il modello base.": " The file exceeds the limit: lower the limit to simplify the base model further.", " Attenzione: la mesh ha %1 lati aperti, controllala nello slicer.": " Warning: the mesh has %1 open edges, check it in your slicer.", " Dettaglio ridotto per rispettare il limite.": " Detail reduced to respect the limit.", "Salvataggio annullato.": "Save cancelled.", "Errore: %1": "Error: %1", "Carrozzeria di prova": "Demo car body", "OK": "OK", "Alto": "Top", "Fronte": "Front", "Destra": "Right", "Doppio clic: ingrandisci / riduci": "Double-click: enlarge / restore", "Controllo il modello": "Checking the model", "Semplifico il modello": "Simplifying the model", "Calcolo la geometria": "Computing the geometry", "Unisco i vertici": "Merging vertices", "Cerco i buchi": "Looking for holes", "Chiudo i buchi": "Closing holes", "Chiudo i buchi del modello": "Closing holes in the model", "Controllo il verso delle facce": "Checking face orientation", "Controllo la mesh": "Checking the mesh", "Costruisco le parti": "Building the parts", "Creo il pacchetto": "Creating the package", "Riduco il dettaglio per rispettare il limite": "Reducing detail to respect the limit", "File 3MF non valido (non è uno zip)": "Invalid 3MF file (not a zip)", "File OBJ senza facce valide": "OBJ file without valid faces", "File STL non valido": "Invalid STL file", "Formato non supportato: usa STL, 3MF oppure OBJ": "Unsupported format: use STL, 3MF or OBJ", "Il 3MF non contiene triangoli": "The 3MF contains no triangles", "Nel 3MF non trovo nessun modello": "No model found inside the 3MF", "XML del 3MF non valido": "Invalid 3MF XML", "Nessuna area lavorata: posiziona l'area sulla superficie del modello.": "No worked area: place the area on the model surface.", "Nessuna area colorata: posiziona l'immagine sulla superficie del modello.": "No colored area: place the image on the model surface."};
+  const t = (s, ...a) => { let r = LANG === 'it' ? s : (EN[s] !== undefined ? EN[s] : s); a.forEach((v, i) => { r = r.split('%' + (i + 1)).join(v); }); return r; };
+  const nf = (n) => Math.round(n).toLocaleString(LANG === 'it' ? 'it' : 'en');
+  const RENDER = []; let st = ['Pronto.', false, []];
+  const tArgs = (args) => args.map((v) => (typeof v === 'string' ? t(v) : v));
+  function renderStatus() { const s = $('status'); s.textContent = typeof st[0] === 'function' ? st[0]() : t(st[0], ...tArgs(st[2])); s.className = st[1] ? 'err' : ''; }
+  const setStatus = (key, err, args) => { st = [key, !!err, args || []]; renderStatus(); };
+  RENDER.push(renderStatus);
+  const I18 = [];
+  (function scan() {
+    const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, { acceptNode: (n) => (n.parentElement.closest('script,style,[data-dyn]') || !n.nodeValue.trim() ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT) });
+    let n; while ((n = w.nextNode())) I18.push({ n, it: n.nodeValue.trim(), pre: n.nodeValue.match(/^\s*/)[0], post: n.nodeValue.match(/\s*$/)[0] });
+    document.querySelectorAll('[aria-label],[title]').forEach((e) => ['aria-label', 'title'].forEach((k) => { if (e.hasAttribute(k) && !e.closest('.lang')) I18.push({ e, k, it: e.getAttribute(k) }); }));
+  })();
+  const MISSING = [];
+  function setLang(l) {
+    LANG = l; document.documentElement.lang = l;
+    I18.forEach((x) => { const v = l === 'it' ? x.it : EN[x.it]; if (v === undefined && l !== 'it') MISSING.push(x.it); const o = v === undefined ? x.it : v; if (x.n) x.n.nodeValue = x.pre + o + x.post; else x.e.setAttribute(x.k, o); });
+    $('lEN').setAttribute('aria-pressed', l === 'en'); $('lIT').setAttribute('aria-pressed', l === 'it');
+    RENDER.forEach((f) => f());
+  }
+  window.DecalMissing = MISSING;
   const mode = () => document.querySelector('input[name=mode]:checked').value;
   const sign = () => (document.querySelector('input[name=rs]:checked').value === 'down' ? -1 : 1);
   const isPng = () => $('sPat').value.slice(0, 3) === 'png';
@@ -1162,8 +1382,8 @@ const Core = makeCore();
 
   /* ---------- barra di avanzamento ---------- */
   function showProg(l, f, done) {
-    clearTimeout(S.hideT); $('prog').hidden = false; $('prog').style.display = ''; if (l) $('pLab').textContent = l;
-    $('bCancel').textContent = done ? 'OK' : 'Annulla';
+    clearTimeout(S.hideT); $('prog').hidden = false; $('prog').style.display = ''; if (l) $('pLab').textContent = t(l);
+    $('bCancel').textContent = done ? 'OK' : t('Annulla');
     const p = Math.max(0, Math.min(1, f || 0)); $('pBar').style.width = (p * 100).toFixed(1) + '%'; $('pPct').textContent = Math.round(p * 100) + '%';
     $('bCancel').hidden = done ? false : !(S.exporting && Engine.canCancel);
   }
@@ -1180,11 +1400,30 @@ const Core = makeCore();
   camera.up.set(0, 0, 1);
   scene.add(camera);
   scene.add(new THREE.AmbientLight(0xffffff, 0.62));
-  const key = new THREE.DirectionalLight(0xffffff, 0.85); key.position.set(0.4, 0.3, 1); camera.add(key);
-  const controls = new THREE.OrbitControls(camera, canvas);
-  controls.enableDamping = false;
-  let need = true;
-  controls.addEventListener('change', () => (need = true));
+  const key = new THREE.DirectionalLight(0xffffff, 0.85); scene.add(key); scene.add(key.target);
+  /* quattro viste: Alto, 3D, Fronte, Destra. Ogni vista ha la sua camera e i suoi controlli, legati al proprio riquadro. */
+  const VDEF = [
+    { id: 'vTop', ortho: true, dir: [0, 0, 1], up: [0, 1, 0] }, { id: 'v3d', ortho: false },
+    { id: 'vFront', ortho: true, dir: [0, -1, 0], up: [0, 0, 1] }, { id: 'vRight', ortho: true, dir: [1, 0, 0], up: [0, 0, 1] },
+  ];
+  let need = true; let half = 50; let maxId = null;
+  const V = VDEF.map((d) => {
+    const el = $(d.id); const cam = d.ortho ? new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 5000) : camera;
+    if (d.ortho) { cam.up.set(d.up[0], d.up[1], d.up[2]); cam.position.set(d.dir[0] * 150, d.dir[1] * 150, d.dir[2] * 150); }
+    const ctl = new THREE.OrbitControls(cam, el); ctl.enableDamping = false;
+    if (d.ortho) {
+      ctl.enableRotate = false; ctl.screenSpacePanning = true;
+      ctl.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
+      if (ctl.touches) ctl.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_PAN };
+    }
+    ctl.addEventListener('change', () => (need = true)); ctl.update();
+    return Object.assign({}, d, { el, cam, ctl, asp: 0 });
+  });
+  const controls = V[1].ctl;
+  function toggleMax(id) {
+    maxId = maxId === id ? null : id; $('views').classList.toggle('max', maxId !== null);
+    V.forEach((v) => v.el.classList.toggle('on', v.id === maxId)); need = true;
+  }
   function theme() {
     const bg = getComputedStyle(document.documentElement).getPropertyValue('--viewport').trim() || '#e4e1db';
     scene.background = new THREE.Color(bg); need = true;
@@ -1194,10 +1433,26 @@ const Core = makeCore();
   if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', theme);
   function resize() {
     const r = canvas.parentElement.getBoundingClientRect(); if (!r.width || !r.height) return;
-    renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix(); need = true;
+    renderer.setSize(r.width, r.height, false); need = true;
   }
   new ResizeObserver(resize).observe(canvas.parentElement); resize();
-  (function loop() { requestAnimationFrame(loop); if (need) { need = false; renderer.render(scene, camera); } })();
+  const lp = new THREE.Vector3();
+  function renderAll() {
+    const cr = canvas.getBoundingClientRect(); renderer.setScissorTest(true);
+    V.forEach((v) => {
+      if (maxId !== null && maxId !== v.id) return;
+      const r = v.el.getBoundingClientRect(); if (r.width < 2 || r.height < 2) return;
+      const x = r.left - cr.left, y = cr.bottom - r.bottom, w = r.width, h = r.height, asp = w / h;
+      if (v.ortho) {
+        if (v.asp !== asp || v.half !== half) { v.cam.left = -half * asp; v.cam.right = half * asp; v.cam.top = half; v.cam.bottom = -half; v.cam.updateProjectionMatrix(); }
+      } else if (v.asp !== asp) { v.cam.aspect = asp; v.cam.updateProjectionMatrix(); }
+      v.asp = asp; v.half = half;
+      v.cam.updateMatrixWorld(); const D = v.cam.position.distanceTo(v.ctl.target) || 1;
+      lp.set(0.12 * D, 0.09 * D, 0.3 * D).applyMatrix4(v.cam.matrixWorld); key.position.copy(lp); key.target.position.copy(v.ctl.target); key.target.updateMatrixWorld();
+      renderer.setViewport(x, y, w, h); renderer.setScissor(x, y, w, h); renderer.render(scene, v.cam);
+    });
+  }
+  (function loop() { requestAnimationFrame(loop); if (need) { need = false; renderAll(); } })();
 
   /* ---------- modello ---------- */
   function buildMesh(m) {
@@ -1211,28 +1466,40 @@ const Core = makeCore();
   function showCounts() {
     const cur = S.model ? S.model.T.length / 3 : 0;
     $('nCur').textContent = S.model ? nf(cur) : '—';
-    const extra = S.model && S.fullTris !== cur ? ' · originale ' + nf(S.fullTris) : '';
-    $('nHint').textContent = 'Oltre il 60% di questo limite il modello viene semplificato. Il resto serve ai dettagli di colore o rilievo.' + extra;
-    $('empty').hidden = !!S.model;
+    $('empty').hidden = !!S.model; renderHint();
   }
+  function renderHint() {
+    const cur = S.model ? S.model.T.length / 3 : 0;
+    const extra = S.model && S.fullTris !== cur ? t(' · originale %1', nf(S.fullTris)) : '';
+    $('nHint').textContent = t('Oltre il 60% di questo limite il modello viene semplificato. Il resto serve ai dettagli di colore o rilievo.') + extra;
+    $('nCur').textContent = S.model ? nf(cur) : '—';
+  }
+  function renderInfo() { $('mInfo').textContent = S.model ? t(S.info.name) + ' · ' + S.info.dims + ' mm' : t('Nessun modello caricato'); $('mRep').textContent = S.model && S.rep ? describeReport(S.rep) : ''; }
+  function renderChips() {
+    const c = S.chip; $('chFil').innerHTML = t('filamenti') + ' <b>' + c.n + '</b>' + (c.n > 4 ? t(' · oltre 4, serve più di un AMS') : ''); $('chFil').className = 'chip' + (c.n > 4 ? ' warn' : '');
+    $('chTri').innerHTML = t(c.lab) + ' <b>' + nf(c.area) + ' mm²</b>';
+  }
+  RENDER.push(renderHint, renderInfo, renderChips);
   function dims(m) { return [0, 1, 2].map((k) => m.max[k] - m.min[k]); }
   function setDefaultWidth() {
     if (!S.model) return; const dim = Math.max(...dims(S.model)); const rW = $('rW'); rW.max = Math.max(10, Math.round(dim * 1.5)); rW.value = Math.round(dim * 0.35 * 2) / 2; updOut();
   }
   function describeReport(r) {
     const bits = [];
-    if (r.flipped) bits.push(r.flipped + ' facce girate nel verso giusto');
-    if (r.dup) bits.push(r.dup + ' triangoli duplicati tolti');
-    let t = bits.length ? 'Sistemato: ' + bits.join(', ') + '.' : 'Controllo eseguito: nessun problema trovato.';
-    if (r.holes) t += ' Trovati ' + r.holes + ' buchi: verranno chiusi quando prepari il file per la stampa.';
-    if (r.nonManifold) t += ' ' + r.nonManifold + ' lati condivisi da più di due facce.';
-    return t;
+    if (r.flipped) bits.push(t('%1 facce girate nel verso giusto', r.flipped));
+    if (r.dup) bits.push(t('%1 triangoli duplicati tolti', r.dup));
+    let s = bits.length ? t('Sistemato: %1.', bits.join(', ')) : t('Controllo eseguito: nessun problema trovato.');
+    if (r.holes) s += t(' Trovati %1 buchi: verranno chiusi quando prepari il file per la stampa.', r.holes);
+    if (r.nonManifold) s += t(' %1 lati condivisi da più di due facce.', r.nonManifold);
+    return s;
   }
   function placeDefault() { const hit = topHit(S.model); if (hit) S.place = { O: hit, v: [0, 0, 1], up: [0, 1, 0] }; }
   function fitCamera() {
     const m = S.model, sz = dims(m), dim = Math.max(...sz), c = [0, 1, 2].map((k) => (m.min[k] + m.max[k]) / 2);
     controls.target.set(c[0], c[1], c[2]); camera.position.set(c[0] + dim * 0.9, c[1] - dim * 1.5, c[2] + dim * 1.0);
     camera.near = dim / 200; camera.far = dim * 40; camera.updateProjectionMatrix(); controls.update();
+    half = dim * 0.62;
+    V.forEach((v) => { if (!v.ortho) return; v.ctl.target.set(c[0], c[1], c[2]); v.cam.position.set(c[0] + v.dir[0] * dim * 3, c[1] + v.dir[1] * dim * 3, c[2] + v.dir[2] * dim * 3); v.cam.zoom = 1; v.cam.near = dim / 100; v.cam.far = dim * 20; v.cam.updateProjectionMatrix(); v.ctl.update(); });
     if (S.grid) scene.remove(S.grid);
     S.grid = new THREE.GridHelper(dim * 3, 30, 0x888888, 0x555555); S.grid.rotation.x = Math.PI / 2; S.grid.position.set(c[0], c[1], m.min[2] - 0.01);
     S.grid.material.opacity = 0.35; S.grid.material.transparent = true; scene.add(S.grid);
@@ -1243,8 +1510,7 @@ const Core = makeCore();
     S.lastTarget = target(); S.model = r.model; S.fullTris = r.fullTris;
     buildMesh(S.model); setDefaultWidth(); fitCamera(); clearOverlay(); showTex(null); placeDefault();
     const sz = dims(S.model);
-    $('mInfo').textContent = name + ' · ' + sz.map((x) => x.toFixed(1)).join(' × ') + ' mm';
-    $('mRep').textContent = describeReport(r.report); showCounts(); hideProg(); need = true; refresh(true);
+    S.info = { name, dims: sz.map((x) => x.toFixed(1)).join(' × ') }; S.rep = r.report; renderInfo(); showCounts(); hideProg(); need = true; refresh(true);
   }
   async function applyLimit() {
     if (!S.model || target() === S.lastTarget) return;
@@ -1273,7 +1539,7 @@ const Core = makeCore();
     if (S.mesh) { scene.remove(S.mesh); S.mesh.geometry.dispose(); S.mesh = null; }
     if (S.grid) { scene.remove(S.grid); S.grid = null; }
     clearOverlay(); showTex(null); $('fSTL').value = '';
-    $('mInfo').textContent = 'Nessun modello caricato'; $('mRep').textContent = ''; $('chTri').innerHTML = 'area <b>0 mm²</b>'; $('chFil').innerHTML = 'filamenti <b>1</b>';
+    S.info = null; S.rep = null; S.chip = { n: 1, area: 0, lab: 'area' }; renderInfo(); renderChips();
     showCounts(); setStatus('Modello rimosso. Carica un file STL per continuare.'); need = true;
   }
 
@@ -1309,24 +1575,24 @@ const Core = makeCore();
   }
   function renderClusters() {
     const box = $('clusters'); box.textContent = '';
-    if (!S.clusters.length) { const p = document.createElement('p'); p.className = 'hint'; p.textContent = 'Nessuna immagine caricata.'; box.append(p); return; }
+    if (!S.clusters.length) { const p = document.createElement('p'); p.className = 'hint'; p.textContent = t('Nessuna immagine caricata.'); box.append(p); return; }
     S.clusters.forEach((c, i) => {
       const r = document.createElement('div'); r.className = 'crow';
-      const inp = document.createElement('input'); inp.type = 'color'; inp.value = c.color; inp.id = 'cc' + i; inp.setAttribute('aria-label', 'Colore ' + (i + 1));
+      const inp = document.createElement('input'); inp.type = 'color'; inp.value = c.color; inp.id = 'cc' + i; inp.setAttribute('aria-label', t('Colore %1', i + 1));
       inp.addEventListener('input', () => { c.color = inp.value; drawQuant(); recolor(); });
-      const nm = document.createElement('div'); nm.className = 'nm'; nm.append('Colore ' + (i + 1));
-      const sm = document.createElement('small'); sm.textContent = Math.round(c.share * 100) + '% dell\'immagine · estrusore ' + (i + 2); nm.append(sm);
+      const nm = document.createElement('div'); nm.className = 'nm'; nm.append(t('Colore %1', i + 1));
+      const sm = document.createElement('small'); sm.textContent = t('%1% dell\'immagine · estrusore %2', Math.round(c.share * 100), i + 2); nm.append(sm);
       const lb = document.createElement('label'); lb.className = 'sw'; const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = c.on; cb.id = 'ck' + i;
       cb.addEventListener('change', () => { c.on = cb.checked; drawQuant(); refresh(true); });
-      lb.append(cb, 'stampa'); r.append(inp, nm, lb); box.append(r);
+      lb.append(cb, t('stampa')); r.append(inp, nm, lb); box.append(r);
     });
   }
   function clearImage() {
-    S.img = null; S.imgData = null; S.clusters = []; $('fIMG').value = '';
+    S.img = null; S.imgData = null; S.clusters = []; S.src = null; $('fIMG').value = '';
     for (const id of ['cOrig', 'cQuant']) { const c = $(id); c.getContext('2d').clearRect(0, 0, c.width, c.height); }
     renderClusters(); clearOverlay(); if (mode() === 'color') showTex(null);
-    $('chFil').innerHTML = 'filamenti <b>1</b>'; $('chTri').innerHTML = 'area <b>0 mm²</b>'; need = true;
-    setStatus('Immagine rimossa. Carica un PNG per continuare.'); refresh(true);
+    S.chip = { n: 1, area: 0, lab: 'area' }; renderChips(); need = true;
+    setStatus('Immagine rimossa. Carica un\'immagine per continuare.'); refresh(true);
   }
   $('bSnap').addEventListener('click', () => {
     S.clusters.forEach((c) => {
@@ -1349,18 +1615,26 @@ const Core = makeCore();
 
   /* ---------- posizionamento ---------- */
   const raycaster = new THREE.Raycaster(); const ndc = new THREE.Vector2(); let down = null;
-  canvas.addEventListener('pointerdown', (e) => (down = [e.clientX, e.clientY]));
-  canvas.addEventListener('pointerup', (e) => {
-    if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5 || !S.mesh) { down = null; return; }
-    down = null;
-    const r = canvas.getBoundingClientRect(); ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
-    raycaster.setFromCamera(ndc, camera);
+  function doPick(cx, cy, v) {
+    if (!S.mesh) return;
+    const cam = v.cam; const r = v.el.getBoundingClientRect(); ndc.set(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1);
+    cam.updateMatrixWorld(); raycaster.setFromCamera(ndc, cam);
     const h = raycaster.intersectObject(S.mesh, false)[0]; if (!h) return;
-    const p = [h.point.x, h.point.y, h.point.z]; let v;
-    if ($('sDir').value === 'camera') { const d = new THREE.Vector3(); camera.getWorldDirection(d); v = [-d.x, -d.y, -d.z]; }
-    else { const n0 = [h.face.normal.x, h.face.normal.y, h.face.normal.z]; v = Core.avgNormal(S.model, p, n0, Math.max(1, +$('rW').value * 0.3)); }
-    const up = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
-    S.place = { O: p, v, up: [up.x, up.y, up.z] }; refresh(true);
+    const p = [h.point.x, h.point.y, h.point.z]; let n;
+    if ($('sDir').value === 'camera') { const d = new THREE.Vector3(); cam.getWorldDirection(d); n = [-d.x, -d.y, -d.z]; }
+    else { const n0 = [h.face.normal.x, h.face.normal.y, h.face.normal.z]; n = Core.avgNormal(S.model, p, n0, Math.max(1, +$('rW').value * 0.3)); }
+    const up = new THREE.Vector3(0, 1, 0).applyQuaternion(cam.quaternion);
+    S.place = { O: p, v: n, up: [up.x, up.y, up.z] }; refresh(true);
+  }
+  V.forEach((v) => {
+    v.el.addEventListener('pointerdown', (e) => (down = [e.clientX, e.clientY]));
+    v.el.addEventListener('pointerup', (e) => {
+      if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) { down = null; return; }
+      down = null;
+      if (S.pickT) { clearTimeout(S.pickT); S.pickT = 0; return; } // secondo clic di un doppio clic
+      const cx = e.clientX, cy = e.clientY; S.pickT = setTimeout(() => { S.pickT = 0; doPick(cx, cy, v); }, 230);
+    });
+    v.el.addEventListener('dblclick', (e) => { e.preventDefault(); clearTimeout(S.pickT); S.pickT = 0; toggleMax(v.id); });
   });
   const params = () => ({
     W: +$('rW').value, rot: +$('rRot').value, d: +$('rD').value, cosMax: Math.cos((+$('rAng').value * Math.PI) / 180),
@@ -1467,8 +1741,8 @@ const Core = makeCore();
       clearOverlay(); const rel = mode() === 'relief';
       if (rel) {
         showTex(r.V ? r : null);
-        $('chTri').innerHTML = 'area lavorata <b>' + nf(r.area) + ' mm²</b>';
-        setStatus(r.nLabeled ? (fs.length > 1 ? fs.length + ' copie posizionate. ' : '') + 'Anteprima a risoluzione ridotta: il file finale usa il dettaglio mesh scelto.' : 'Nessuna area lavorata qui: sposta l\'area sulla superficie del modello.', !r.nLabeled);
+        S.chip = { n: 1, area: r.area, lab: 'area lavorata' }; renderChips();
+        setStatus(r.nLabeled ? () => (fs.length > 1 ? t('%1 copie posizionate. ', fs.length) : '') + t('Anteprima a risoluzione ridotta: il file finale usa il dettaglio mesh scelto.') : 'Nessuna area lavorata qui: sposta l\'area sulla superficie del modello.', !r.nLabeled);
       } else {
         showTex(null);
         for (const l in r.buckets) {
@@ -1477,28 +1751,29 @@ const Core = makeCore();
           m.userData.label = +l; scene.add(m); S.overlay.push(m);
         }
         const n = 1 + r.usedLabels.length;
-        $('chFil').innerHTML = 'filamenti <b>' + n + '</b>' + (n > 4 ? ' · oltre 4, serve più di un AMS' : ''); $('chFil').className = 'chip' + (n > 4 ? ' warn' : '');
-        $('chTri').innerHTML = 'area colorata <b>' + nf(r.area) + ' mm²</b>';
-        setStatus(r.nLabeled ? (p.n > 1 ? fs.length + ' copie posizionate' + (S.missing ? ' su ' + p.n + ' (per le altre non c\'è posto sulla superficie)' : '') + '.' : 'Anteprima aggiornata.') : 'Nessuna area colorata qui: sposta l\'immagine sulla superficie del modello.', !r.nLabeled);
+        S.chip = { n, area: r.area, lab: 'area colorata' }; renderChips();
+        setStatus(r.nLabeled ? () => (p.n > 1 ? t('%1 copie posizionate', fs.length) + (S.missing ? t(' su %1 (per le altre non c\'è posto sulla superficie)', p.n) : '') + '.' : t('Anteprima aggiornata.')) : 'Nessuna area colorata qui: sposta l\'immagine sulla superficie del modello.', !r.nLabeled);
       }
       addArrow(fs[0], wa.W); need = true;
-    } catch (e) { if (!e.cancelled) setStatus('Errore di calcolo: ' + (e.message || e), true); }
+    } catch (e) { if (!e.cancelled) setStatus('Errore di calcolo: %1', true, [e.message || String(e)]); }
     finally { S.busyPrev = false; if (S.pendPrev) { S.pendPrev = false; runPreview(); } }
   }
 
   /* ---------- pannello ---------- */
+  function renderLW() { $('lW').textContent = t(mode() === 'relief' && !isPng() ? 'Larghezza area' : 'Larghezza immagine'); }
+  RENDER.push(renderLW);
   function applyMode() {
     const rel = mode() === 'relief';
     $('reliefBox').hidden = !rel;
     document.querySelectorAll('[data-only=color]').forEach((e) => (e.hidden = rel));
     $('secImg').hidden = rel && !isPng();
     $('rowS').hidden = isPng();
-    $('lW').textContent = rel && !isPng() ? 'Larghezza area' : 'Larghezza immagine';
+    renderLW();
     $('rW').disabled = rel && $('cAll').checked; $('rN').disabled = rel && $('cAll').checked;
     $('chFil').hidden = rel;
   }
   $('cBase').addEventListener('input', () => { if (S.mesh) { S.mesh.material.color.set($('cBase').value); if (S.texMesh) S.texMesh.material.color.set($('cBase').value); need = true; } });
-  const fmt = { rH: (v) => v + ' mm', rS: (v) => v + ' mm', rN: (v) => v, rW: (v) => v + ' mm', rRot: (v) => v + '°', rD: (v) => v + ' mm', rAng: (v) => v + '°', rL: (v) => v + ' mm', rMin: (v) => v + ' mm²', rK: (v) => v };
+  const fmt = { rH: (v) => v + ' mm', rS: (v) => v + ' mm', rN: (v) => v, rW: (v) => v + ' mm', rRot: (v) => v + '°', rD: (v) => v + ' mm', rAng: (v) => v + '°', rL: (v) => v + ' mm', rMin: (v) => v + ' mm²', rK: (v) => v, rBg: (v) => v };
   function updOut() { for (const id in fmt) $('o' + id.slice(1)).textContent = fmt[id]($(id).value); }
   for (const id in fmt) $(id).addEventListener('input', () => { updOut(); if (id === 'rK') { clearTimeout(S.kt); S.kt = setTimeout(requant, 150); } else refresh(false); });
   $('sMode').addEventListener('change', () => refresh(true));
@@ -1517,27 +1792,67 @@ const Core = makeCore();
     S.seed = 1; S.hmc = null;
     if (S.mesh) S.mesh.material.color.set($('cBase').value);
     if (S.model) { setDefaultWidth(); placeDefault(); }
-    updOut(); applyMode(); if (S.imgData) requant();
+    updOut(); applyMode(); if (S.src) applyBg(); else if (S.imgData) requant();
     applyLimit().then(() => refresh(true)); refresh(true); setStatus('Impostazioni ripristinate.');
   }
 
   /* ---------- file ---------- */
   $('fSTL').addEventListener('change', async (e) => {
     const f = e.target.files[0]; if (!f) return;
-    try { setStatus('Leggo ' + f.name + '…'); await loadRaw(Core.parseSTL(await f.arrayBuffer()), f.name); }
+    try { setStatus('Leggo ' + f.name + '…'); await loadRaw(await Core.parseModel(f), f.name); }
     catch (err) { hideProg(); setStatus(err.message || String(err), true); }
   });
+  function setSource(im) {
+    const w0 = im.naturalWidth || im.width || 512, h0 = im.naturalHeight || im.height || 512, s = Math.min(1, 1024 / Math.max(w0, h0));
+    const c = document.createElement('canvas'); c.width = Math.max(2, Math.round(w0 * s)); c.height = Math.max(2, Math.round(h0 * s));
+    c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); S.src = c; applyBg();
+  }
+  function stripBg(src, tol, inner) {
+    const c = document.createElement('canvas'); c.width = src.width; c.height = src.height;
+    const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(src, 0, 0);
+    const id = x.getImageData(0, 0, c.width, c.height), d = id.data, w = c.width, h = c.height;
+    const bins = new Map();
+    const take = (i) => { if (d[4 * i + 3] < 200) return; const k = (d[4 * i] >> 4) * 256 + (d[4 * i + 1] >> 4) * 16 + (d[4 * i + 2] >> 4); const e = bins.get(k) || [0, 0, 0, 0]; e[0]++; e[1] += d[4 * i]; e[2] += d[4 * i + 1]; e[3] += d[4 * i + 2]; bins.set(k, e); };
+    for (let i = 0; i < w; i++) { take(i); take((h - 1) * w + i); } for (let j = 0; j < h; j++) { take(j * w); take(j * w + w - 1); }
+    let best = null; bins.forEach((e) => { if (!best || e[0] > best[0]) best = e; });
+    if (!best) return c;
+    const bg = [best[1] / best[0], best[2] / best[0], best[3] / best[0]];
+    const dist = (i) => Math.hypot(d[4 * i] - bg[0], d[4 * i + 1] - bg[1], d[4 * i + 2] - bg[2]);
+    const gone = new Uint8Array(w * h); const st = [];
+    const isBg = (i) => d[4 * i + 3] < 20 || dist(i) <= tol;
+    if (inner) { for (let i = 0; i < w * h; i++) if (isBg(i)) gone[i] = 1; }
+    else {
+      const push = (i) => { if (!gone[i] && isBg(i)) { gone[i] = 1; st.push(i); } };
+      for (let i = 0; i < w; i++) { push(i); push((h - 1) * w + i); } for (let j = 0; j < h; j++) { push(j * w); push(j * w + w - 1); }
+      while (st.length) { const i = st.pop(), px = i % w; if (px > 0) push(i - 1); if (px < w - 1) push(i + 1); if (i >= w) push(i - w); if (i < w * h - w) push(i + w); }
+    }
+    const rim = []; // un pixel di bordo sfumato verso lo sfondo viene tolto
+    for (let i = 0; i < w * h; i++) if (!gone[i] && dist(i) <= tol * 1.6) { const px = i % w; if ((px > 0 && gone[i - 1]) || (px < w - 1 && gone[i + 1]) || (i >= w && gone[i - w]) || (i < w * h - w && gone[i + w])) rim.push(i); }
+    rim.forEach((i) => (gone[i] = 1));
+    for (let i = 0; i < w * h; i++) if (gone[i]) d[4 * i + 3] = 0;
+    x.putImageData(id, 0, 0); return c;
+  }
+  function applyBg() {
+    if (!S.src) return;
+    const on = $('cBg').checked; $('bgBox').hidden = !on;
+    const c = on ? stripBg(S.src, +$('rBg').value, $('cBgIn').checked) : S.src;
+    setImageFromCanvas(c);
+    if (on) { const d = S.imgData.data; let n = 0; for (let i = 3; i < d.length; i += 4) if (d[i] >= 128) n++; if (n < 20) setStatus('La tolleranza è troppo alta: lo sfondo ha cancellato tutta l\'immagine.', true); }
+  }
   $('fIMG').addEventListener('change', (e) => {
     const f = e.target.files[0]; if (!f) return;
     const url = URL.createObjectURL(f); const im = new Image();
-    im.onload = () => { setImageFromCanvas(im); URL.revokeObjectURL(url); };
-    im.onerror = () => setStatus('Non riesco a leggere questa immagine.', true); im.src = url;
+    im.onload = () => { setSource(im); URL.revokeObjectURL(url); };
+    im.onerror = () => setStatus('Non riesco a leggere questa immagine. Formati supportati dal browser: PNG, JPG, WebP, GIF, BMP, SVG.', true); im.src = url;
   });
+  ['cBg', 'cBgIn', 'rBg'].forEach((id) => $(id).addEventListener('input', () => { clearTimeout(S.bt); S.bt = setTimeout(applyBg, id === 'rBg' ? 120 : 0); }));
+
   $('bRstSTL').addEventListener('click', clearModel);
   $('bRstIMG').addEventListener('click', clearImage);
   $('bReset').addEventListener('click', resetSettings);
 
   /* ---------- esportazione ---------- */
+  const zipName = () => (LANG === 'it' ? 'stampa-multicolore.zip' : 'multicolor-print.zip');
   $('bCancel').addEventListener('click', async () => {
     if ($('bCancel').textContent === 'OK') { hideProg(); return; }
     if (!Engine.cancel()) return;
@@ -1547,31 +1862,33 @@ const Core = makeCore();
   });
   $('bExp').addEventListener('click', async () => {
     if (S.exporting) return;
-    if (!S.model || !S.place) { setStatus('Carica un modello STL e scegli una posizione.', true); return; }
-    if (needsImage() && !S.img) { setStatus('Carica un PNG, oppure scegli un effetto che non lo richiede.', true); return; }
+    if (!S.model || !S.place) { setStatus('Carica un modello e scegli una posizione.', true); return; }
+    if (needsImage() && !S.img) { setStatus('Carica un\'immagine, oppure scegli un effetto che non lo richiede.', true); return; }
     S.exporting = true; $('bExp').disabled = true;
     try {
       showProg('Preparo il calcolo…', 0.01);
-      const { job } = buildJob('export');
+      const { job } = buildJob('export'); job.lang = LANG;
       const r = await Engine.call('compute', job, (f, l) => showProg(l, f * 0.97));
       showProg('In attesa del salvataggio…', 0.98);
       const blob = new Blob([r.zip], { type: 'application/zip' });
       const dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null;
-      if (dl) await dl.save({ filename: 'stampa-multicolore.zip', data: blob });
-      else { const u = URL.createObjectURL(blob); const l = document.createElement('a'); l.href = u; l.download = 'stampa-multicolore.zip'; document.body.append(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); }
+      if (dl) await dl.save({ filename: zipName(), data: blob });
+      else { const u = URL.createObjectURL(blob); const l = document.createElement('a'); l.href = u; l.download = zipName(); document.body.append(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); }
       showProg('Fatto: il file è stato salvato.', 1, true); S.hideT = setTimeout(hideProg, 6000);
       const over = r.tris > limit();
       const rp = r.repair || {};
-      setStatus('Salvato. ' + (rp.holes ? rp.holes + ' buchi chiusi. ' : '') + r.parts + (r.parts === 1 ? ' parte' : ' parti') + ', ' + nf(r.tris) + ' triangoli (limite ' + nf(limit()) + '), ' + (r.zip.length / 1048576).toFixed(1) + ' MB.' + (over ? ' Il file supera il limite: abbassa il limite per semplificare di più il modello base.' : '') + (r.open > 300 ? ' Attenzione: la mesh ha ' + r.open + ' lati aperti, controllala nello slicer.' : '') + (r.attempts ? ' Dettaglio ridotto per rispettare il limite.' : ''), over);
+      const nParts = r.parts, mb = (r.zip.length / 1048576).toFixed(1), lim = limit();
+      setStatus(() => t('Salvato. ') + (rp.holes ? t('%1 buchi chiusi. ', rp.holes) : '') + nParts + t(nParts === 1 ? ' parte' : ' parti') + t(', %1 triangoli (limite %2), %3 MB.', nf(r.tris), nf(lim), mb) + (over ? t(' Il file supera il limite: abbassa il limite per semplificare di più il modello base.') : '') + (r.open > 300 ? t(' Attenzione: la mesh ha %1 lati aperti, controllala nello slicer.', r.open) : '') + (r.attempts ? t(' Dettaglio ridotto per rispettare il limite.') : ''), over);
     } catch (err) {
       hideProg(); if (err && err.cancelled) return;
-      setStatus(err && err.code === 'declined' ? 'Salvataggio annullato.' : 'Errore: ' + (err.message || err.code || err), true);
+      if (err && err.code === 'declined') setStatus('Salvataggio annullato.'); else setStatus('Errore: %1', true, [String(err.message || err.code || err)]);
     } finally { S.exporting = false; $('bExp').disabled = false; }
   });
 
   /* ---------- avvio con esempio ---------- */
   (async () => {
-    updOut(); applyMode(); renderClusters();
+    $('lEN').addEventListener('click', () => setLang('en')); $('lIT').addEventListener('click', () => setLang('it'));
+    renderClusters(); RENDER.push(renderClusters); setLang('en'); updOut(); applyMode();
     await Engine.init();
     try {
       await loadRaw(demoCarRaw(), 'Carrozzeria di prova');
@@ -1582,5 +1899,3 @@ const Core = makeCore();
 /*APP_END*/
 
 </script>
-
-</body></html>
