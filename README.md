@@ -1,5 +1,5 @@
 <a href="https://jacknet1984.github.io/textureonyourSTL/" target="_blank">
-  <img src="https://github.com/user-attachments/assets/6d858fa7-ea64-4789-a14e-19d4f3d1de43" alt="Anteprima del progetto" width="100%" />
+  <img src="https://github.com/user-attachments/assets/5c661173-3b06-4c5c-9ac9-8610893894d2" alt="Anteprima del progetto" width="100%" />
 </a>
 
 <img width="2473" height="1239" alt="PRONTO4" src="https://github.com/user-attachments/assets/e7026570-165a-4f04-876d-52a17224147e" />
