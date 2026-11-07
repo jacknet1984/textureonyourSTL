@@ -2,6 +2,10 @@
   <img src="https://github.com/user-attachments/assets/6d858fa7-ea64-4789-a14e-19d4f3d1de43" alt="Anteprima del progetto" width="100%" />
 </a>
 
+<img width="2473" height="1239" alt="PRONTO4" src="https://github.com/user-attachments/assets/e7026570-165a-4f04-876d-52a17224147e" />
+
+<img width="2470" height="1246" alt="PRONTO2" src="https://github.com/user-attachments/assets/219f8a8b-9226-4929-a828-e72058748b94" />
+
 Repository: jacknet184/textureonyourSTL
 ------------------------------------------------------------------------
 
