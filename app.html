@@ -1738,6 +1738,22 @@ function makeCore() { return (() => {
     return out;
   }
 
+  // superfici (fondo escluso) che nessuna copia ha raggiunto: serve al controllo finale di copertura
+  function unreached(res, nzMin, skip) {
+    const P = res.P, T = res.T, bd = res.bd, nT = T.length / 3; let tot = 0, un = 0; const list = [];
+    for (let t = 0; t < nT; t++) {
+      const a = T[3 * t] * 3, b = T[3 * t + 1] * 3, c = T[3 * t + 2] * 3;
+      const ux = P[b] - P[a], uy = P[b + 1] - P[a + 1], uz = P[b + 2] - P[a + 2], wx = P[c] - P[a], wy = P[c + 1] - P[a + 1], wz = P[c + 2] - P[a + 2];
+      const nx = uy * wz - uz * wy, ny = uz * wx - ux * wz, nz = ux * wy - uy * wx, A2 = Math.hypot(nx, ny, nz);
+      if (A2 < 1e-9 || nz / A2 < nzMin) continue;
+      const A = 0.5 * A2; tot += A; if (bd[t] > -2) continue; un += A;
+      if (skip && skip.has(t)) continue;
+      list.push({ t, A, c: [(P[a] + P[b] + P[c]) / 3, (P[a + 1] + P[b + 1] + P[c + 1]) / 3, (P[a + 2] + P[b + 2] + P[c + 2]) / 3], n: [nx / A2, ny / A2, nz / A2] });
+    }
+    list.sort((p, q) => q.A - p.A);
+    return { list, frac: tot ? un / tot : 0 };
+  }
+
   /* ---------- quantizzazione colori ---------- */
   function quantize(img, K) {
     const { data, width: w, height: h } = img;
@@ -1803,7 +1819,7 @@ function makeCore() { return (() => {
     let LB = prev ? Array.from(prev.lab) : new Array(T.length / 3).fill(0);
     let FM = prev ? Array.from(prev.frm) : new Array(T.length / 3).fill(0);
     // con keepPrev ogni triangolo resta alla direzione di lavoro meglio allineata alla sua superficie (non alla prima che lo raggiunge)
-    let BD = prm.keepPrev ? (prev && prev.bd ? Array.from(prev.bd) : new Array(T.length / 3).fill(-2)) : null;
+    let BD = (prm.keepPrev || prm.track) ? (prev && prev.bd ? Array.from(prev.bd) : new Array(T.length / 3).fill(-2)) : null;
     const O = fr.O, R = fr.r, U = fr.u, V = fr.v;
     const lx = (i) => (P[3 * i] - O[0]) * R[0] + (P[3 * i + 1] - O[1]) * R[1] + (P[3 * i + 2] - O[2]) * R[2];
     const ly = (i) => (P[3 * i] - O[0]) * U[0] + (P[3 * i + 1] - O[1]) * U[1] + (P[3 * i + 2] - O[2]) * U[2];
@@ -1858,7 +1874,8 @@ function makeCore() { return (() => {
       if ((LX[a] < -hw && LX[b] < -hw && LX[c] < -hw) || (LX[a] > hw && LX[b] > hw && LX[c] > hw) || (LY[a] < -hh && LY[b] < -hh && LY[c] < -hh) || (LY[a] > hh && LY[b] > hh && LY[c] > hh)) continue;
       const n = triN(a, b, c); const l = len(n); if (l < 1e-18) continue;
       const dd = dot(n, V) / l; if (dd < cosMax) continue;
-      if (BD && BD[t] >= dd - 0.05) continue;
+      if (BD && prm.keepPrev && BD[t] >= dd - 0.05) continue;
+      if (BD && prm.onlyEmpty && BD[t] > -2) continue;
       if (prm.nzMin !== undefined && n[2] / l < prm.nzMin) continue;
       if (prm.zMin !== undefined && Math.max(P[3 * a + 2], P[3 * b + 2], P[3 * c + 2]) <= prm.zMin) continue;
       const ax = lx(a), ay = ly(a), bx = lx(b), by = ly(b), cx = lx(c), cy = ly(c);
@@ -1871,7 +1888,7 @@ function makeCore() { return (() => {
         const ext = Math.max(maxx - minx, maxy - miny);
         if (mz < zb[ci] - (0.5 + ext * tanMax)) continue;
       }
-      fl[t] = 1; if (BD) { BD[t] = dd; LB[t] = 0; FM[t] = 0; }
+      fl[t] = 1; if (BD && prm.keepPrev) { BD[t] = dd; LB[t] = 0; FM[t] = 0; }
     }
     // 3) raffinamento conforme (split dei lati lunghi, senza T-junction)
     const L2 = L * L; const MAXTRI = prm.maxTri || 1800000; let capped = false; pg(0.25);
@@ -1939,7 +1956,8 @@ function makeCore() { return (() => {
       const ix = Math.min(img.w - 1, Math.floor((mx / W + 0.5) * img.w));
       const iy = Math.min(img.h - 1, Math.floor((0.5 - my / H) * img.h));
       const lb = img.labels[iy * img.w + ix];
-      if (!lb || enabled[lb - 1] === false) continue;
+      const off = !lb || enabled[lb - 1] === false, track = BD && !prm.keepPrev;
+      if (off && !track) continue;
       const n = triN(a, b, c); const l = len(n); if (l < 1e-18) continue;
       if (dot(n, V) / l < cosMax) continue;
       const ci = cellIdx(mx, my);
@@ -1948,6 +1966,8 @@ function makeCore() { return (() => {
         const ext = Math.max(Math.max(ax, bx, cx) - Math.min(ax, bx, cx), Math.max(ay, by, cy) - Math.min(ay, by, cy));
         if (mz < zb[ci] - ((cell + ext) * tanMax + 0.2)) continue;
       }
+      if (track) BD[t] = 1; // raggiunto davvero da questa copia (dentro il riquadro, visibile), anche se l'immagine li' non ha colore
+      if (off) continue;
       lab[t] = lb; frm[t] = prm.frameIndex || 0;
     }
     // 5) elimina macchie piccole (componenti connesse sotto minArea)
@@ -2415,7 +2435,7 @@ function makeCore() { return (() => {
     return zip(entries, prog ? (f) => prog(0.5 + f * 0.5) : null);
   }
 
-  return { parseOBJ, parse3MF, parseModel, fixPinches, triAreaSum, finishModel, repair, decimate, parseSTL, weld, makeFrame, avgNormal, displace, rayHit, randomSurface, scatterSurface, planCover, quantize, computeDecal, buildParts, openEdges, volumeOf, buildPackage, zip, crc32, stlBinary, model3MF };
+  return { parseOBJ, parse3MF, parseModel, fixPinches, triAreaSum, finishModel, repair, decimate, parseSTL, weld, makeFrame, avgNormal, displace, rayHit, randomSurface, scatterSurface, planCover, unreached, quantize, computeDecal, buildParts, openEdges, volumeOf, buildPackage, zip, crc32, stlBinary, model3MF };
 })(); }
 /*CORE_END*/
 
@@ -2446,12 +2466,44 @@ function makeHandlers(Core) {
     const n = st.full.T.length / 3;
     st.model = n > target ? Core.decimate(st.full, target, prog) : st.full;
   }
+  // direzione da cui la superficie q si vede libera: prima la sua perpendicolare, poi direzioni via via piu' inclinate (zone incassate, interni)
+  function freeDir(m, q, cmin) {
+    const n = q.n, t1 = Math.abs(n[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0];
+    let tx = t1[1] * n[2] - t1[2] * n[1], ty = t1[2] * n[0] - t1[0] * n[2], tz = t1[0] * n[1] - t1[1] * n[0]; const tl = Math.hypot(tx, ty, tz); tx /= tl; ty /= tl; tz /= tl;
+    const ux = n[1] * tz - n[2] * ty, uy = n[2] * tx - n[0] * tz, uz = n[0] * ty - n[1] * tx;
+    const o = [q.c[0] + n[0] * 0.02, q.c[1] + n[1] * 0.02, q.c[2] + n[2] * 0.02];
+    const cands = [n];
+    for (const ang of [0.5, 0.87, 1.13]) for (let k = 0; k < 8; k++) {
+      const ph = (k * Math.PI) / 4, a = Math.cos(ph), b = Math.sin(ph), ca = Math.cos(ang), sa = Math.sin(ang);
+      cands.push([ca * n[0] + sa * (a * tx + b * ux), ca * n[1] + sa * (a * ty + b * uy), ca * n[2] + sa * (a * tz + b * uz)]);
+    }
+    for (const d of cands) if (d[0] * n[0] + d[1] * n[1] + d[2] * n[2] >= cmin && !Core.rayHit(m, o, d)) return d;
+    return null;
+  }
   function chain(m, j, L, prog, f0, f1) {
-    let res = null; const n = j.frames.length;
-    j.frames.forEach((fr, i) => {
-      res = Core.computeDecal(m, fr, { W: j.W, H: j.H, L, cosMax: j.cosMax, keepPrev: j.keepPrev, nzMin: j.nzMin, zMin: j.zMin, minArea: i === n - 1 ? j.minArea : 0, enabled: j.enabled, frameIndex: i, maxTri: j.maxTri, prog: (f) => prog(f0 + ((f1 - f0) * (i + f)) / n, 'Calcolo la geometria') }, j.img, res);
-    });
-    return res;
+    let res = null; const n0 = j.frames.length, close = !!j.close;
+    const run = (fr, i, last, extra, fa, fb) => Core.computeDecal(m, fr, { W: j.W, H: j.H, L, cosMax: j.cosMax, keepPrev: j.keepPrev, track: close, onlyEmpty: !!extra, nzMin: j.nzMin, zMin: j.zMin, minArea: last ? j.minArea : 0, enabled: j.enabled, frameIndex: i, maxTri: j.maxTri, prog: (f) => prog(fa + (fb - fa) * f, 'Calcolo la geometria') }, j.img, res);
+    const part = close ? 0.75 : 1;
+    for (let i = 0; i < n0; i++) res = run(j.frames[i], i, !close && i === n0 - 1, false, f0 + ((f1 - f0) * part * i) / n0, f0 + ((f1 - f0) * part * (i + 1)) / n0);
+    if (!close) return res;
+    // controllo finale: cerca le superfici rimaste fuori da ogni copia e le raggiunge con copie mirate (solo dove manca ancora qualcosa)
+    const diag = Math.hypot(m.max[0] - m.min[0], m.max[1] - m.min[1], m.max[2] - m.min[2]), gap = Math.min(0.5 * Math.min(j.W, j.H), 0.12 * diag);
+    const skip = new Set(); let extra = 0;
+    for (let round = 0; round < 4 && j.frames.length < 254; round++) {
+      const un = Core.unreached(res, -0.5, skip); if (un.frac < 0.0003 || !un.list.length) break;
+      const picks = [];
+      for (const q of un.list) { if (picks.length >= 40) break; if (picks.every((p) => Math.hypot(p.c[0] - q.c[0], p.c[1] - q.c[1], p.c[2] - q.c[2]) >= gap)) picks.push(q); }
+      picks.forEach((q, k) => {
+        if (j.frames.length >= 254) return; // l'indice della copia occupa un solo byte
+        const d = freeDir(m, q, j.cosMax + 0.03); if (!d) { skip.add(q.t); return; }
+        const fr = Core.makeFrame(q.c, d, Math.abs(d[2]) > 0.9 ? [0, 1, 0] : [0, 0, 1], j.rot || 0); j.frames.push(fr); extra++;
+        res = run(fr, j.frames.length - 1, false, true, f0 + (f1 - f0) * (0.75 + 0.2 * (round + k / picks.length) / 4), f0 + (f1 - f0) * (0.75 + 0.2 * (round + (k + 1) / picks.length) / 4));
+        if (res.bd[q.t] <= -2) skip.add(q.t);
+      });
+    }
+    const fin = run(j.frames[j.frames.length - 1], j.frames.length - 1, true, true, f0 + (f1 - f0) * 0.95, f1);
+    fin.cover = 1 - Core.unreached(fin, -0.5).frac;
+    return fin;
   }
   return {
     ping() { return { ok: 1 }; },
@@ -2488,14 +2540,14 @@ function makeHandlers(Core) {
         const Lp = j.kind === 'relief' && j.keepPrev ? fitL(wr.m, j.L, j.maxTri) : j.L;
         const res = chain(wr.m, wr.jc, Lp, () => {}, 0, 1);
         const area = Core.triAreaSum(res.P, res.T, res.lab);
-        if (j.kind === 'relief') { const o = Core.displace(res, j.frames, j.hm, j.amount); return { V: o.V, I: o.I, area, nLabeled: res.nLabeled, capped: res.capped, coarse: Lp > j.L * 1.05 }; }
+        if (j.kind === 'relief') { const o = Core.displace(res, j.frames, j.hm, j.amount); return { V: o.V, I: o.I, area, nLabeled: res.nLabeled, capped: res.capped, coarse: Lp > j.L * 1.05, cover: res.cover }; }
         const bk = {};
         for (let t = 0; t < res.lab.length; t++) {
           const l = res.lab[t]; if (!l) continue; const fv = j.frames[res.frm[t]].v; const a = bk[l] || (bk[l] = []);
           for (let k = 0; k < 3; k++) { const i = res.T[3 * t + k]; a.push(res.P[3 * i] + 0.03 * fv[0], res.P[3 * i + 1] + 0.03 * fv[1], res.P[3 * i + 2] + 0.03 * fv[2]); }
         }
         const buckets = {}; for (const l in bk) buckets[l] = Float32Array.from(bk[l]);
-        return { buckets, area, nLabeled: res.nLabeled, usedLabels: res.usedLabels, capped: res.capped, V: wr.o ? wr.o.V.slice() : undefined, I: wr.o ? wr.o.I.slice() : undefined }; // copie: i buffer originali restano nella memoria del rilievo
+        return { buckets, area, nLabeled: res.nLabeled, usedLabels: res.usedLabels, capped: res.capped, cover: res.cover, V: wr.o ? wr.o.V.slice() : undefined, I: wr.o ? wr.o.I.slice() : undefined }; // copie: i buffer originali restano nella memoria del rilievo
       }
       // esportazione: se il file supera il limite, riprova con un dettaglio più grossolano
       let L = j.L, attempt = 0, parts, res, capped = false, mm = m;
@@ -2658,7 +2710,7 @@ const Core = makeCore();
   const unhex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
   /* ---------- lingua ---------- */
   let LANG = 'en';
-  const EN = {"STL / 3MF / OBJ + immagine, esportazione multicolore per la stampa 3D": "STL / 3MF / OBJ + image, multicolor export for 3D printing", "Ripristina impostazioni": "Reset settings", "Modello 3D": "3D model", "Carica modello (STL, 3MF, OBJ)": "Load model (STL, 3MF, OBJ)", "Ripristina STL": "Reset model", "Numero massimo di triangoli": "Maximum number of triangles", "attuali:": "current:", "Immagine": "Image", "Carica immagine (PNG, JPG, WebP, GIF, BMP, SVG)": "Load image (PNG, JPG, WebP, GIF, BMP, SVG)", "Ripristina immagine": "Reset image", "Rimuovi lo sfondo (usa il colore dei bordi)": "Remove background (uses the edge color)", "Tolleranza sfondo": "Background tolerance", "Rimuovi anche le zone interne dello stesso colore": "Also remove inner areas of the same color", "Numero di colori": "Number of colors", "Originale": "Original", "Come verrà stampata": "As it will be printed", "Adatta ai filamenti più comuni": "Snap to common filament colors", "Colore del modello": "Model color", "Colore del modello (estrusore 1)": "Model color (extruder 1)", "Lavorazione": "Processing", "Tipo di lavorazione": "Processing type", "Colore": "Color", "Rilievo / sotto": "Relief / engraving", "Effetto": "Effect", "Mattone": "Brick", "Pietra": "Stone", "Spirale": "Spiral", "Bolle": "Bubbles", "Crepe": "Cracks", "Lana": "Wool", "Fiocchi di neve": "Snowflakes", "Triangoli uniti": "Joined triangles", "Numeri": "Numbers", "Stelle": "Stars", "Dal PNG caricato (sagoma)": "From loaded image (silhouette)", "Dal PNG caricato (luminosità)": "From loaded image (brightness)", "Rilievo o sottorilievo": "Relief or engraving", "Rilievo": "Relief", "Sottorilievo": "Engraving", "Altezza o profondità": "Height or depth", "Dimensione del motivo": "Pattern size", "Inverti il motivo (per esempio le fughe invece dei mattoni)": "Invert the pattern (e.g. the grout instead of the bricks)", "Copri tutto l'oggetto (tutti i lati, tranne il fondo)": "Cover the whole object (all sides, except the bottom)", "Il rilievo è nello stesso colore del modello: serve un solo filamento.": "The relief has the same color as the model: only one filament is needed.", "Posizione sul modello": "Position on the model", "Clicca sul modello per mettere il centro dell'immagine. Trascina per ruotare la vista.": "Click the model to place the center of the image. Drag to rotate the view.", "Larghezza immagine": "Image width", "Larghezza area": "Area width", "Rotazione": "Rotation", "Numero di copie": "Number of copies", "Disposizione delle copie": "Copy layout", "Vicine al punto cliccato": "Near the clicked point", "Attorno all'oggetto": "Around the object", "Sparse a caso sulla superficie": "Scattered randomly on the surface", "Rimescola": "Shuffle", "Spessore del colore": "Color thickness", "Inclinazione massima": "Maximum slope", "Dettaglio mesh": "Mesh detail", "Elimina macchie sotto": "Remove specks below", "Direzione di proiezione": "Projection direction", "Perpendicolare alla superficie": "Perpendicular to the surface", "Lungo la vista della camera": "Along the camera view", "Esporta": "Export", "Prepara file per la stampa (.zip)": "Prepare files for printing (.zip)", "Quando premi il pulsante, i buchi del modello vengono chiusi prima del calcolo. Lo zip contiene modello.3mf con un estrusore per colore, gli STL separati e un LEGGIMI.": "When you press the button, holes in the model are closed before the calculation. The zip contains model.3mf with one extruder per color, the separate STL files and a README.", "Carica un file STL per iniziare": "Load a model file to get started", "Elaborazione": "Processing", "Annulla": "Cancel", "trascina: ruota/sposta · rotella: zoom · clic: posiziona": "drag: rotate/pan · wheel: zoom · click: place", "Doppio clic su una vista per ingrandirla / ridurla": "Double-click a view to zoom in / out", "Pronto.": "Ready.", "Nessun modello caricato": "No model loaded", "Nessun modello caricato.": "No model loaded.", "Oltre il 60% di questo limite il modello viene semplificato. Il resto serve ai dettagli di colore o rilievo.": "Above 60% of this limit the model is simplified. The rest is used for color or relief detail.", " · originale %1": " · original %1", "filamenti": "filaments", " · oltre 4, serve più di un AMS": " · over 4, you need more than one AMS", "area": "area", "area colorata": "colored area", "area lavorata": "worked area", "%1 facce girate nel verso giusto": "%1 faces flipped to the right direction", "%1 triangoli duplicati tolti": "%1 duplicate triangles removed", "Sistemato: %1.": "Fixed: %1.", "Controllo eseguito: nessun problema trovato.": "Check done: no problems found.", " Trovati %1 buchi: verranno chiusi quando prepari il file per la stampa.": " Found %1 holes: they will be closed when you prepare the file for printing.", " %1 lati condivisi da più di due facce.": " %1 edges shared by more than two faces.", "Non riesco a caricare la libreria 3D. Controlla la connessione e ricarica la pagina.": "Cannot load the 3D library. Check your connection and reload the page.", "Modello rimosso. Carica un file STL per continuare.": "Model removed. Load a model file to continue.", "Nessuna immagine caricata.": "No image loaded.", "Colore %1": "Color %1", "%1% dell'immagine · estrusore %2": "%1% of the image · extruder %2", "stampa": "print", "Immagine rimossa. Carica un'immagine per continuare.": "Image removed. Load an image to continue.", "Carica un PNG per usarlo come rilievo.": "Load an image to use it as relief.", "Carica un PNG per vedere i colori sul modello.": "Load an image to see the colors on the model.", "%1 copie posizionate. ": "%1 copies placed. ", "Anteprima a risoluzione ridotta: il file finale usa il dettaglio mesh scelto.": "Reduced-resolution preview: the final file uses the chosen mesh detail.", "Nessuna area lavorata qui: sposta l'area sulla superficie del modello.": "No worked area here: move the area onto the model surface.", "%1 copie posizionate": "%1 copies placed", " su %1 (per le altre non c'è posto sulla superficie)": " out of %1 (there is no room on the surface for the others)", "Anteprima aggiornata.": "Preview updated.", "Nessuna area colorata qui: sposta l'immagine sulla superficie del modello.": "No colored area here: move the image onto the model surface.", "Errore di calcolo: %1": "Calculation error: %1", "Clicca sul modello per applicare la nuova direzione.": "Click the model to apply the new direction.", "Impostazioni ripristinate.": "Settings reset.", "La tolleranza è troppo alta: lo sfondo ha cancellato tutta l'immagine.": "The tolerance is too high: the background removal erased the whole image.", "Non riesco a leggere questa immagine. Formati supportati dal browser: PNG, JPG, WebP, GIF, BMP, SVG.": "Cannot read this image. Formats supported by the browser: PNG, JPG, WebP, GIF, BMP, SVG.", "Annullo l'esportazione…": "Cancelling the export…", "Esportazione annullata.": "Export cancelled.", "Carica un modello e scegli una posizione.": "Load a model and choose a position.", "Carica un'immagine, oppure scegli un effetto che non lo richiede.": "Load an image, or choose an effect that does not need one.", "Preparo il calcolo…": "Preparing the calculation…", "In attesa del salvataggio…": "Waiting for the save…", "Fatto: il file è stato salvato.": "Done: the file has been saved.", "Salvato. ": "Saved. ", "%1 buchi chiusi. ": "%1 holes closed. ", " parte": " part", " parti": " parts", ", %1 triangoli (limite %2), %3 MB.": ", %1 triangles (limit %2), %3 MB.", " Il file supera il limite: abbassa il limite per semplificare di più il modello base.": " The file exceeds the limit: lower the limit to simplify the base model further.", " Attenzione: la mesh ha %1 lati aperti, controllala nello slicer.": " Warning: the mesh has %1 open edges, check it in your slicer.", " Dettaglio ridotto per rispettare il limite.": " Detail reduced to respect the limit.", "Salvataggio annullato.": "Save cancelled.", "Errore: %1": "Error: %1", "Carrozzeria di prova": "Demo car body", " Alza il numero massimo di triangoli per avere più dettaglio.": " Raise the maximum number of triangles for more detail.", "Clicca su una texture per aggiungere il rilievo ai colori. Cliccala di nuovo per toglierlo.": "Click a texture to add relief on top of the colors. Click it again to remove it.", "OK": "OK", "Una per faccia (sopra e lati)": "One per side (top and sides)", "Riempi tutto l'oggetto di copie (tranne il fondo)": "Fill the whole object with copies (except the bottom)", "Sfondo tolto in automatico: l'immagine non aveva trasparenza. Togli la spunta per tenerlo.": "Background removed automatically: the image had no transparency. Untick the box to keep it.", "Repository GitHub": "GitHub repository", "Alto": "Top", "Fronte": "Front", "Destra": "Right", "Doppio clic: ingrandisci / riduci": "Double-click: enlarge / restore", "Controllo il modello": "Checking the model", "Semplifico il modello": "Simplifying the model", "Calcolo la geometria": "Computing the geometry", "Unisco i vertici": "Merging vertices", "Cerco i buchi": "Looking for holes", "Chiudo i buchi": "Closing holes", "Chiudo i buchi del modello": "Closing holes in the model", "Controllo il verso delle facce": "Checking face orientation", "Controllo la mesh": "Checking the mesh", "Costruisco le parti": "Building the parts", "Creo il pacchetto": "Creating the package", "Riduco il dettaglio per rispettare il limite": "Reducing detail to respect the limit", "File 3MF non valido (non è uno zip)": "Invalid 3MF file (not a zip)", "File OBJ senza facce valide": "OBJ file without valid faces", "File STL non valido": "Invalid STL file", "Formato non supportato: usa STL, 3MF oppure OBJ": "Unsupported format: use STL, 3MF or OBJ", "Il 3MF non contiene triangoli": "The 3MF contains no triangles", "Nel 3MF non trovo nessun modello": "No model found inside the 3MF", "XML del 3MF non valido": "Invalid 3MF XML", "Nessuna area lavorata: posiziona l'area sulla superficie del modello.": "No worked area: place the area on the model surface.", "Nessuna area colorata: posiziona l'immagine sulla superficie del modello.": "No colored area: place the image on the model surface."};
+  const EN = {"STL / 3MF / OBJ + immagine, esportazione multicolore per la stampa 3D": "STL / 3MF / OBJ + image, multicolor export for 3D printing", "Ripristina impostazioni": "Reset settings", "Modello 3D": "3D model", "Carica modello (STL, 3MF, OBJ)": "Load model (STL, 3MF, OBJ)", "Ripristina STL": "Reset model", "Numero massimo di triangoli": "Maximum number of triangles", "attuali:": "current:", "Immagine": "Image", "Carica immagine (PNG, JPG, WebP, GIF, BMP, SVG)": "Load image (PNG, JPG, WebP, GIF, BMP, SVG)", "Ripristina immagine": "Reset image", "Rimuovi lo sfondo (usa il colore dei bordi)": "Remove background (uses the edge color)", "Tolleranza sfondo": "Background tolerance", "Rimuovi anche le zone interne dello stesso colore": "Also remove inner areas of the same color", "Numero di colori": "Number of colors", "Originale": "Original", "Come verrà stampata": "As it will be printed", "Adatta ai filamenti più comuni": "Snap to common filament colors", "Colore del modello": "Model color", "Colore del modello (estrusore 1)": "Model color (extruder 1)", "Lavorazione": "Processing", "Tipo di lavorazione": "Processing type", "Colore": "Color", "Rilievo / sotto": "Relief / engraving", "Effetto": "Effect", "Mattone": "Brick", "Pietra": "Stone", "Spirale": "Spiral", "Bolle": "Bubbles", "Crepe": "Cracks", "Lana": "Wool", "Fiocchi di neve": "Snowflakes", "Triangoli uniti": "Joined triangles", "Numeri": "Numbers", "Stelle": "Stars", "Dal PNG caricato (sagoma)": "From loaded image (silhouette)", "Dal PNG caricato (luminosità)": "From loaded image (brightness)", "Rilievo o sottorilievo": "Relief or engraving", "Rilievo": "Relief", "Sottorilievo": "Engraving", "Altezza o profondità": "Height or depth", "Dimensione del motivo": "Pattern size", "Inverti il motivo (per esempio le fughe invece dei mattoni)": "Invert the pattern (e.g. the grout instead of the bricks)", "Copri tutto l'oggetto (tutti i lati, tranne il fondo)": "Cover the whole object (all sides, except the bottom)", "Il rilievo è nello stesso colore del modello: serve un solo filamento.": "The relief has the same color as the model: only one filament is needed.", "Posizione sul modello": "Position on the model", "Clicca sul modello per mettere il centro dell'immagine. Trascina per ruotare la vista.": "Click the model to place the center of the image. Drag to rotate the view.", "Larghezza immagine": "Image width", "Larghezza area": "Area width", "Rotazione": "Rotation", "Numero di copie": "Number of copies", "Disposizione delle copie": "Copy layout", "Vicine al punto cliccato": "Near the clicked point", "Attorno all'oggetto": "Around the object", "Sparse a caso sulla superficie": "Scattered randomly on the surface", "Rimescola": "Shuffle", "Spessore del colore": "Color thickness", "Inclinazione massima": "Maximum slope", "Dettaglio mesh": "Mesh detail", "Elimina macchie sotto": "Remove specks below", "Direzione di proiezione": "Projection direction", "Perpendicolare alla superficie": "Perpendicular to the surface", "Lungo la vista della camera": "Along the camera view", "Esporta": "Export", "Prepara file per la stampa (.zip)": "Prepare files for printing (.zip)", "Quando premi il pulsante, i buchi del modello vengono chiusi prima del calcolo. Lo zip contiene modello.3mf con un estrusore per colore, gli STL separati e un LEGGIMI.": "When you press the button, holes in the model are closed before the calculation. The zip contains model.3mf with one extruder per color, the separate STL files and a README.", "Carica un file STL per iniziare": "Load a model file to get started", "Elaborazione": "Processing", "Annulla": "Cancel", "trascina: ruota/sposta · rotella: zoom · clic: posiziona": "drag: rotate/pan · wheel: zoom · click: place", "Doppio clic su una vista per ingrandirla / ridurla": "Double-click a view to zoom in / out", "Pronto.": "Ready.", "Nessun modello caricato": "No model loaded", "Nessun modello caricato.": "No model loaded.", "Oltre il 60% di questo limite il modello viene semplificato. Il resto serve ai dettagli di colore o rilievo.": "Above 60% of this limit the model is simplified. The rest is used for color or relief detail.", " · originale %1": " · original %1", "filamenti": "filaments", " · oltre 4, serve più di un AMS": " · over 4, you need more than one AMS", "area": "area", "area colorata": "colored area", "area lavorata": "worked area", "%1 facce girate nel verso giusto": "%1 faces flipped to the right direction", "%1 triangoli duplicati tolti": "%1 duplicate triangles removed", "Sistemato: %1.": "Fixed: %1.", "Controllo eseguito: nessun problema trovato.": "Check done: no problems found.", " Trovati %1 buchi: verranno chiusi quando prepari il file per la stampa.": " Found %1 holes: they will be closed when you prepare the file for printing.", " %1 lati condivisi da più di due facce.": " %1 edges shared by more than two faces.", "Non riesco a caricare la libreria 3D. Controlla la connessione e ricarica la pagina.": "Cannot load the 3D library. Check your connection and reload the page.", "Modello rimosso. Carica un file STL per continuare.": "Model removed. Load a model file to continue.", "Nessuna immagine caricata.": "No image loaded.", "Colore %1": "Color %1", "%1% dell'immagine · estrusore %2": "%1% of the image · extruder %2", "stampa": "print", "Immagine rimossa. Carica un'immagine per continuare.": "Image removed. Load an image to continue.", "Carica un PNG per usarlo come rilievo.": "Load an image to use it as relief.", "Carica un PNG per vedere i colori sul modello.": "Load an image to see the colors on the model.", "%1 copie posizionate. ": "%1 copies placed. ", "Anteprima a risoluzione ridotta: il file finale usa il dettaglio mesh scelto.": "Reduced-resolution preview: the final file uses the chosen mesh detail.", "Nessuna area lavorata qui: sposta l'area sulla superficie del modello.": "No worked area here: move the area onto the model surface.", "%1 copie posizionate": "%1 copies placed", " su %1 (per le altre non c'è posto sulla superficie)": " out of %1 (there is no room on the surface for the others)", "Anteprima aggiornata.": "Preview updated.", "Nessuna area colorata qui: sposta l'immagine sulla superficie del modello.": "No colored area here: move the image onto the model surface.", "Errore di calcolo: %1": "Calculation error: %1", "Clicca sul modello per applicare la nuova direzione.": "Click the model to apply the new direction.", "Impostazioni ripristinate.": "Settings reset.", "La tolleranza è troppo alta: lo sfondo ha cancellato tutta l'immagine.": "The tolerance is too high: the background removal erased the whole image.", "Non riesco a leggere questa immagine. Formati supportati dal browser: PNG, JPG, WebP, GIF, BMP, SVG.": "Cannot read this image. Formats supported by the browser: PNG, JPG, WebP, GIF, BMP, SVG.", "Annullo l'esportazione…": "Cancelling the export…", "Esportazione annullata.": "Export cancelled.", "Carica un modello e scegli una posizione.": "Load a model and choose a position.", "Carica un'immagine, oppure scegli un effetto che non lo richiede.": "Load an image, or choose an effect that does not need one.", "Preparo il calcolo…": "Preparing the calculation…", "In attesa del salvataggio…": "Waiting for the save…", "Fatto: il file è stato salvato.": "Done: the file has been saved.", "Salvato. ": "Saved. ", "%1 buchi chiusi. ": "%1 holes closed. ", " parte": " part", " parti": " parts", ", %1 triangoli (limite %2), %3 MB.": ", %1 triangles (limit %2), %3 MB.", " Il file supera il limite: abbassa il limite per semplificare di più il modello base.": " The file exceeds the limit: lower the limit to simplify the base model further.", " Attenzione: la mesh ha %1 lati aperti, controllala nello slicer.": " Warning: the mesh has %1 open edges, check it in your slicer.", " Dettaglio ridotto per rispettare il limite.": " Detail reduced to respect the limit.", "Salvataggio annullato.": "Save cancelled.", "Errore: %1": "Error: %1", "Carrozzeria di prova": "Demo car body", "Copertura: %1%": "Coverage: %1%", " Alza il numero massimo di triangoli per avere più dettaglio.": " Raise the maximum number of triangles for more detail.", "Clicca su una texture per aggiungere il rilievo ai colori. Cliccala di nuovo per toglierlo.": "Click a texture to add relief on top of the colors. Click it again to remove it.", "OK": "OK", "Una per faccia (sopra e lati)": "One per side (top and sides)", "Riempi tutto l'oggetto di copie (tranne il fondo)": "Fill the whole object with copies (except the bottom)", "Sfondo tolto in automatico: l'immagine non aveva trasparenza. Togli la spunta per tenerlo.": "Background removed automatically: the image had no transparency. Untick the box to keep it.", "Repository GitHub": "GitHub repository", "Alto": "Top", "Fronte": "Front", "Destra": "Right", "Doppio clic: ingrandisci / riduci": "Double-click: enlarge / restore", "Controllo il modello": "Checking the model", "Semplifico il modello": "Simplifying the model", "Calcolo la geometria": "Computing the geometry", "Unisco i vertici": "Merging vertices", "Cerco i buchi": "Looking for holes", "Chiudo i buchi": "Closing holes", "Chiudo i buchi del modello": "Closing holes in the model", "Controllo il verso delle facce": "Checking face orientation", "Controllo la mesh": "Checking the mesh", "Costruisco le parti": "Building the parts", "Creo il pacchetto": "Creating the package", "Riduco il dettaglio per rispettare il limite": "Reducing detail to respect the limit", "File 3MF non valido (non è uno zip)": "Invalid 3MF file (not a zip)", "File OBJ senza facce valide": "OBJ file without valid faces", "File STL non valido": "Invalid STL file", "Formato non supportato: usa STL, 3MF oppure OBJ": "Unsupported format: use STL, 3MF or OBJ", "Il 3MF non contiene triangoli": "The 3MF contains no triangles", "Nel 3MF non trovo nessun modello": "No model found inside the 3MF", "XML del 3MF non valido": "Invalid 3MF XML", "Nessuna area lavorata: posiziona l'area sulla superficie del modello.": "No worked area: place the area on the model surface.", "Nessuna area colorata: posiziona l'immagine sulla superficie del modello.": "No colored area: place the image on the model surface."};
   const t = (s, ...a) => { let r = LANG === 'it' ? s : (EN[s] !== undefined ? EN[s] : s); a.forEach((v, i) => { r = r.split('%' + (i + 1)).join(v); }); return r; };
   const nf = (n) => Math.round(n).toLocaleString(LANG === 'it' ? 'it' : 'en');
   const RENDER = []; let st = ['Pronto.', false, []];
@@ -3012,7 +3064,7 @@ const Core = makeCore();
     if ($('cFill').checked || (mode() === 'relief' && isPng() && $('cAll').checked)) {
       // riempie tutto l'oggetto (fondo escluso): sceglie le copie in base alla superficie ancora scoperta, anche su lati inclinati, rientranze e angoli
       const HH = (mode() === 'relief' && !isPng()) ? Wa : (S.img ? (Wa * S.img.h) / S.img.w : Wa);
-      const plan = Core.planCover(m, Wa, HH, p.rot, p.cosMax, -0.5, S.seed * 131 + 7, 220, [base], (pt, n) => (cam ? n : Core.avgNormal(m, pt, n, Math.max(1, W * 0.3))));
+      const plan = Core.planCover(m, Wa, HH, p.rot, p.cosMax, -0.5, S.seed * 131 + 7, 180, [base], (pt, n) => (cam ? n : Core.avgNormal(m, pt, n, Math.max(1, W * 0.3))));
       plan.forEach((q) => out.push(q.fr));
       return out;
     }
@@ -3082,10 +3134,11 @@ const Core = makeCore();
       const hm = buildHM(wa.W, wa.H); const mask = new Uint8Array(hm.w * hm.h); for (let i = 0; i < mask.length; i++) mask[i] = hm.data[i] > 0.03 ? 1 : 0;
       job.img = { w: hm.w, h: hm.h, labels: mask }; job.enabled = [true]; job.hm = hm; job.amount = sign() * +$('rH').value;
     } else job.img = { w: S.img.w, h: S.img.h, labels: S.img.labels };
+    job.rot = p.rot; job.close = !comboOn() && ($('cFill').checked || (mode() === 'relief' && $('cAll').checked)); // con colori + rilievo il controllo sul colore sarebbe troppo lento
     if (comboOn()) {
       // colori + rilievo: prima si lavora tutto l'oggetto con la texture, poi i colori si posano sulla superficie gia' lavorata
       const Wr = Math.hypot(...dims(S.model)) * 1.05, hm = buildHM(Wr, Wr), mask = new Uint8Array(hm.w * hm.h); for (let i = 0; i < mask.length; i++) mask[i] = hm.data[i] > 0.03 ? 1 : 0;
-      job.relief = { key: [$('sPat').value, $('rS').value, $('cInv').checked, sign() * +$('rH').value, S.seed, Wr.toFixed(2), purpose].join('|'), frames: allFrames({ ...p, rot: 0 }).map((f) => ({ O: f.O, v: f.v, u: f.u, r: f.r })), W: Wr, H: Wr, L: purpose === 'preview' ? Math.max(p.L, Wr / 140) : p.L, cosMax: p.cosMax, keepPrev: true, zMin: S.model.min[2] + 0.5, minArea: 0, maxTri: lim, enabled: [true], img: { w: hm.w, h: hm.h, labels: mask }, hm, amount: sign() * +$('rH').value };
+      job.relief = { key: [$('sPat').value, $('rS').value, $('cInv').checked, sign() * +$('rH').value, S.seed, Wr.toFixed(2), purpose].join('|'), frames: allFrames({ ...p, rot: 0 }).map((f) => ({ O: f.O, v: f.v, u: f.u, r: f.r })), W: Wr, H: Wr, L: purpose === 'preview' ? Math.max(p.L, Wr / 140) : p.L, cosMax: p.cosMax, keepPrev: true, close: true, rot: 0, zMin: S.model.min[2] + 0.5, minArea: 0, maxTri: lim, enabled: [true], img: { w: hm.w, h: hm.h, labels: mask }, hm, amount: sign() * +$('rH').value };
     }
     return { job, fs, p, wa };
   }
@@ -3122,7 +3175,7 @@ const Core = makeCore();
       if (rel) {
         showTex(r.V ? r : null);
         S.chip = { n: 1, area: r.area, lab: 'area lavorata' }; renderChips();
-        setStatus(r.nLabeled ? () => (fs.length > 1 && !$('cAll').checked ? t('%1 copie posizionate. ', fs.length) : '') + t('Anteprima a risoluzione ridotta: il file finale usa il dettaglio mesh scelto.') + (r.coarse ? t(' Dettaglio ridotto per rispettare il limite.') + t(' Alza il numero massimo di triangoli per avere più dettaglio.') : '') : 'Nessuna area lavorata qui: sposta l\'area sulla superficie del modello.', !r.nLabeled);
+        setStatus(r.nLabeled ? () => (fs.length > 1 && !$('cAll').checked ? t('%1 copie posizionate. ', fs.length) : '') + t('Anteprima a risoluzione ridotta: il file finale usa il dettaglio mesh scelto.') + (r.cover != null ? ' ' + t('Copertura: %1%', (r.cover * 100).toFixed(1)) + '.' : '') + (r.coarse ? t(' Dettaglio ridotto per rispettare il limite.') + t(' Alza il numero massimo di triangoli per avere più dettaglio.') : '') : 'Nessuna area lavorata qui: sposta l\'area sulla superficie del modello.', !r.nLabeled);
       } else {
         showTex(r.V ? r : null);
         for (const l in r.buckets) {
@@ -3132,7 +3185,7 @@ const Core = makeCore();
         }
         const n = 1 + r.usedLabels.length;
         S.chip = { n, area: r.area, lab: 'area colorata' }; renderChips();
-        setStatus(r.nLabeled ? () => (p.n > 1 || $('cFill').checked ? t('%1 copie posizionate', fs.length) + (S.missing ? t(' su %1 (per le altre non c\'è posto sulla superficie)', p.n) : '') + '.' : t('Anteprima aggiornata.')) : 'Nessuna area colorata qui: sposta l\'immagine sulla superficie del modello.', !r.nLabeled);
+        setStatus(r.nLabeled ? () => (p.n > 1 || $('cFill').checked ? t('%1 copie posizionate', fs.length) + (S.missing ? t(' su %1 (per le altre non c\'è posto sulla superficie)', p.n) : '') + '.' + (r.cover != null ? ' ' + t('Copertura: %1%', (r.cover * 100).toFixed(1)) + '.' : '') : t('Anteprima aggiornata.')) : 'Nessuna area colorata qui: sposta l\'immagine sulla superficie del modello.', !r.nLabeled);
       }
       addArrow(fs[0], wa.W); need = true;
     } catch (e) { if (!e.cancelled) setStatus('Errore di calcolo: %1', true, [e.message || String(e)]); }
